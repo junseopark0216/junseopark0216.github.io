@@ -508,3 +508,9 @@ a.chip-cat:hover { color: var(--brass-ink); filter: brightness(.96); }
   * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
   .t-caret { animation: none; }
 }
+
+/* 마우스 커서: 전체 크로스헤어 + 클릭 요소는 포인터, 입력창은 텍스트 */
+body { cursor: crosshair; }
+a, button, summary, .cat-link, .group-tab, .lang-btn, .nav-cat-btn,
+[data-search-open], [data-theme-toggle], [data-lang-switch], .social-copy { cursor: pointer; }
+input, textarea { cursor: text; }
