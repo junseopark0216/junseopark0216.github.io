@@ -1,0 +1,27 @@
+---
+layout: default
+title: Posts
+permalink: /posts/
+---
+<section class="cat-hero wrap">
+  <p class="term"><span class="t-user">zune@lab</span>:<span class="t-path">~</span>$ ls -lt posts/</p>
+  <div class="cat-hero-title"><h1>전체 글<span class="dot">.</span></h1></div>
+  <p class="cat-hero-desc">{{ site.posts | size }}개의 글을 최신순으로 모았습니다.</p>
+  <ul class="cat-switch" aria-label="카테고리로 보기">
+    {%- for c in site.data.categories %}
+    <li><a href="{{ '/' | append: c.key | append: '/' | relative_url }}">{{ c.name }} <em>{{ site.categories[c.key] | size }}</em></a></li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="wrap section">
+  {%- assign years = site.posts | group_by_exp: "p", "p.date | date: '%Y'" %}
+  {%- for y in years %}
+  <div class="year-block">
+    <h2 class="year">{{ y.name }}</h2>
+    <ul class="post-list">
+      {%- for post in y.items %}{% include post-row.html post=post %}{% endfor %}
+    </ul>
+  </div>
+  {%- endfor %}
+</section>

@@ -1,0 +1,12 @@
+---
+layout: default
+---
+<article class="page wrap-narrow">
+  <header class="page-head">
+    <h1 class="page-title">{{ page.title }}<span class="dot">.</span></h1>
+    {%- if page.description %}<p class="page-desc">{{ page.description }}</p>{% endif %}
+  </header>
+  <div class="prose">
+    {{ content }}
+  </div>
+</article>

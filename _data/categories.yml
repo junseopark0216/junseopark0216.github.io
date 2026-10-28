@@ -1,0 +1,56 @@
+# 과제에서 요구한 6개 카테고리.
+# key  : 글 머리말(front matter)의 category 값, 그리고 주소(/ctf/)
+# name : 화면에 보이는 이름
+# glyph: 카드에 쓰는 작은 아이콘 (_includes/glyph.html 참고)
+
+- key: dev
+  name: 개발
+  desc: 직접 만든 도구와 프로젝트, 그 과정에서 막혔던 부분
+  glyph: dev
+
+- key: ctf
+  name: CTF/Wargame
+  desc: 대회·워게임 문제 풀이와 익스플로잇을 짜기까지의 과정
+  glyph: flag
+  # 이 카테고리는 글의 group 값으로 다시 두 갈래로 나뉩니다.
+  # 글 머리말에 group: ctf 또는 group: wargame 을 넣으면 해당 탭에 들어갑니다.
+  groups:
+    - key: ctf
+      name: CTF 라이트업
+    - key: wargame
+      name: 워게임
+
+- key: bugbounty
+  name: Bug Bounty
+  desc: 실제 서비스에서 찾은 취약점과 제보, 패치까지의 기록
+  glyph: bug
+
+- key: tech
+  name: 블로그/기술문서
+  desc: 공부하며 정리한 개념, 도구 사용법, 환경 세팅 노트
+  glyph: doc
+  groups:
+    - key: blog
+      name: 블로그
+    - key: doc
+      name: 기술문서
+
+- key: paper
+  name: 논문/컨퍼런스
+  desc: 읽은 논문 요약과 다녀온 보안 컨퍼런스 후기
+  glyph: paper
+  groups:
+    - key: paper
+      name: 논문 리뷰
+    - key: conf
+      name: 컨퍼런스
+
+- key: contest
+  name: 공모전/자격증
+  desc: 공모전 참가 후기와 자격증 준비 과정
+  glyph: badge
+  groups:
+    - key: contest
+      name: 공모전
+    - key: cert
+      name: 자격증

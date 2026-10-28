@@ -1,0 +1,67 @@
+# ─────────────────────────────────────────────
+#  자기소개 데이터 — 홈 화면과 About 페이지가 이 파일을 읽습니다.
+#  값을 비워 두면("") 화면에서 숨겨집니다.
+# ─────────────────────────────────────────────
+
+handle: ZUNE
+name: Junseo Park
+name_ko: 박준서
+role: Security Researcher
+# 홈 터미널에서 whoami 다음에 찍히는 한 줄
+whoami: pwnable · binary analysis · reverse engineering
+tagline: 직접 부숴보고, 이해한 만큼 기록합니다.
+avatar: /assets/img/avatar.jpg
+
+links:
+  github: junseopark0216
+  email: r00th00f02@gmail.com
+  linkedin: "https://www.linkedin.com/in/junseopark0216/"
+  x: ""               # 전체 URL
+  discord: ""         # 디스코드 사용자명 (예: zune 또는 zune#0001). 클릭하면 복사됨
+  discord_url: "https://discord.com/users/610150604647432223"   # 있으면 복사 대신 이 링크로 이동.
+                      #   서버 초대: https://discord.gg/xxxx
+                      #   내 프로필: https://discord.com/users/<숫자 ID>  (설정>고급>개발자모드 켜고 프로필 우클릭 "ID 복사")
+
+about_intro: >-
+  시스템 해킹(Pwnable), 바이너리 분석, 리버스 엔지니어링을 위주로 공부하는 학생입니다.
+
+# period 는 오른쪽에 작게 표시됩니다. (위에 적을수록 최신)
+# About 화면에서는 "Timeline" 이라는 제목으로 보입니다.
+activities:
+  - org: HSpace Knights Frontier 3기
+    detail: 멤버로 활동 중      # ← 구체적인 활동 내용으로 바꾸세요
+    period: 2026.11 –
+  - org: Cisco Virtual Internship Program 2026
+    detail: Cisco Systems × 과학기술정보통신부 · 수료
+    period: 2026.06 – 07
+  - org: 빡공팟(P4C) 16기
+    detail: 시스템 해킹 트랙 · ELITE 3 (TOP 3) · TEAMH4C 주관
+    period: 2026.03 – 06
+  - org: 대한민국 육군 병장 만기 전역
+    detail: 수도방위사령부 작전 행정병
+    period: 2024.09 – 2026.03
+  - org: 화이트햇 스쿨(WHS) 1기
+    detail: 수료 · KITRI 주관 (현 KISA)
+    period: 2023.09 – 2024.03
+
+# 수상 내역이 생기면 activities 와 같은 형식으로 추가하세요.
+awards: []
+
+education: []
+
+projects:
+  - name: Junseo's Multi-Tool
+    url: https://github.com/junseopark0216/multi_tool
+    status: 진행 중      # 비워 두면 배지가 숨겨집니다.
+    detail: >-
+      워게임 풀이에 필요한 자잘한 작업(GDB 출력 정리·스택 분석·엔디안/Base64 변환)을
+      한 화면에 모은 GUI 도구. 학습 중 가볍게 시작했고, 직접 써보며 찾은 개선점을
+      반영해 다듬는 중입니다.
+
+skills:
+  - group: Languages
+    items: [C, Assembly (x86/x64), Python]
+  - group: Tools
+    items: [Ghidra, IDA Pro, GDB, OllyDbg, HxD, PEview, pwntools, Dumb-Fuzzer]
+  - group: Environment
+    items: [Linux (Ubuntu / WSL), Git]

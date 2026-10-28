@@ -1,0 +1,13 @@
+{%- assign post = include.post -%}
+{%- assign ckey = post.categories | first -%}
+{%- assign cat = site.data.categories | where: "key", ckey | first -%}
+<li class="post-row" data-group="{{ post.group }}">
+  <time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time>
+  <div class="post-row-body">
+    <a class="post-row-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    <div class="post-row-meta">
+      {%- if cat and include.hide_cat != true %}<a class="chip chip-cat" href="{{ '/' | append: cat.key | append: '/' | relative_url }}">{{ cat.name }}</a>{% endif -%}
+      {%- for t in post.tags limit: 4 %}<span class="chip">{{ t }}</span>{% endfor -%}
+    </div>
+  </div>
+</li>

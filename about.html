@@ -1,0 +1,84 @@
+---
+layout: default
+title: About
+permalink: /about/
+body_class: is-about
+---
+{%- comment -%} 내용은 _data/profile.yml 에서 고치세요. {%- endcomment -%}
+{%- assign p = site.data.profile -%}
+<section class="about-hero wrap-narrow">
+  <img class="about-avatar" src="{{ p.avatar | relative_url }}" alt="{{ p.handle }} 아바타" width="96" height="96">
+  <p class="about-role">{{ p.role }}</p>
+  <h1 class="about-name">{{ p.name }}</h1>
+  <p class="about-intro">{{ p.about_intro }}</p>
+  <ul class="socials">
+    {%- if p.links.github != "" %}<li><a href="https://github.com/{{ p.links.github }}" aria-label="GitHub"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.4 1 .1-.8.4-1.3.8-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.3 4.6 18.3 5 18.3 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg></a></li>{% endif %}
+    {%- if p.links.x != "" %}<li><a href="{{ p.links.x }}" aria-label="X"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M17.8 2.5h3.3l-7.2 8.2 8.5 10.8h-6.6l-5.2-6.6-6 6.6H1.3l7.7-8.8L.9 2.5h6.8l4.7 6.1 5.4-6.1zm-1.2 17h1.8L7.6 4.3H5.6z"/></svg></a></li>{% endif %}
+    {%- if p.links.linkedin != "" %}<li><a href="{{ p.links.linkedin }}" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9.5h4v11H3zM9.5 9.5h3.8v1.6c.5-1 1.8-1.9 3.7-1.9 4 0 4.5 2.4 4.5 5.6v5.7h-4v-5c0-1.3 0-3-1.8-3s-2.2 1.4-2.2 2.9v5.1h-4z"/></svg></a></li>{% endif %}
+    {%- capture discord_icon %}<svg viewBox="0 0 24 24" width="19" height="19" aria-hidden="true"><path fill="currentColor" d="M19.3 5.3A17 17 0 0 0 15 4l-.3.5a12 12 0 0 1 3.8 1.9 16 16 0 0 0-13 0A12 12 0 0 1 9.3 4.5L9 4a17 17 0 0 0-4.3 1.3C2 9.3 1.3 13.2 1.6 17a17 17 0 0 0 5.2 2.6l.6-1a11 11 0 0 1-1.8-.9l.4-.3a12 12 0 0 0 10.2 0l.4.3a11 11 0 0 1-1.8.9l.6 1a17 17 0 0 0 5.2-2.6c.4-4.5-.6-8.4-2.8-11.7zM8.9 14.8c-1 0-1.9-1-1.9-2.1 0-1.2.8-2.1 1.9-2.1s1.9 1 1.9 2.1-.9 2.1-1.9 2.1zm6.2 0c-1 0-1.9-1-1.9-2.1 0-1.2.9-2.1 1.9-2.1s1.9 1 1.9 2.1-.8 2.1-1.9 2.1z"/></svg>{% endcapture -%}
+    {%- if p.links.discord_url != "" %}<li><a href="{{ p.links.discord_url }}" aria-label="Discord">{{ discord_icon }}</a></li>
+    {%- elsif p.links.discord != "" %}<li><button type="button" class="social-copy" data-copy="{{ p.links.discord }}" aria-label="디스코드 {{ p.links.discord }} 복사" title="{{ p.links.discord }} · 클릭하면 복사">{{ discord_icon }}<span class="copied" aria-hidden="true">복사됨</span></button></li>{% endif %}
+    {%- if p.links.email != "" %}<li><a href="mailto:{{ p.links.email }}" aria-label="Email"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 6.5l8.5 7 8.5-7" fill="none" stroke="currentColor" stroke-width="2"/></svg></a></li>{% endif %}
+    <li><a href="{{ '/feed.xml' | relative_url }}" aria-label="RSS"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M5 17a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM3 10a11 11 0 0 1 11 11h-3a8 8 0 0 0-8-8zm0-6a17 17 0 0 1 17 17h-3A14 14 0 0 0 3 7z"/></svg></a></li>
+  </ul>
+</section>
+
+{%- comment -%} Education / Timeline / Awards — 각 섹션을 직접 불러옵니다.
+  (데이터는 _data/profile.yml 의 education / activities / awards 에 있습니다.) {%- endcomment -%}
+{%- if p.education and p.education.size > 0 %}
+<section class="about-block wrap-narrow">
+  <h2>Education<span class="dot">.</span></h2>
+  <ul class="timeline">
+    {%- for it in p.education %}
+    <li><div><b>{{ it.org }}</b><span>{{ it.detail }}</span></div><time>{{ it.period }}</time></li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if p.activities and p.activities.size > 0 %}
+<section class="about-block wrap-narrow">
+  <h2>Timeline<span class="dot">.</span></h2>
+  <ul class="timeline">
+    {%- for it in p.activities %}
+    <li><div><b>{{ it.org }}</b><span>{{ it.detail }}</span></div><time>{{ it.period }}</time></li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if p.awards and p.awards.size > 0 %}
+<section class="about-block wrap-narrow">
+  <h2>Awards<span class="dot">.</span></h2>
+  <ul class="timeline">
+    {%- for it in p.awards %}
+    <li><div><b>{{ it.org }}</b><span>{{ it.detail }}</span></div><time>{{ it.period }}</time></li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if p.projects and p.projects.size > 0 %}
+<section class="about-block wrap-narrow">
+  <h2>Projects<span class="dot">.</span></h2>
+  <ul class="projects">
+    {%- for pr in p.projects %}
+    <li>
+      <a href="{{ pr.url }}"><span class="proj-head"><b>{{ pr.name }}</b>{% if pr.status and pr.status != "" %}<span class="proj-status">{{ pr.status }}</span>{% endif %}</span><span class="t-path">{{ pr.url | remove: "https://" }}</span></a>
+      <p>{{ pr.detail }}</p>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+{%- endif %}
+
+{%- if p.skills %}
+<section class="about-block wrap-narrow">
+  <h2>Skills<span class="dot">.</span></h2>
+  <dl class="skills">
+    {%- for s in p.skills %}
+    <div><dt>{{ s.group }}</dt><dd>{% for i in s.items %}<span class="chip chip-mono">{{ i }}</span>{% endfor %}</dd></div>
+    {%- endfor %}
+  </dl>
+</section>
+{%- endif %}

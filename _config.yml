@@ -1,0 +1,50 @@
+# ─────────────────────────────────────────────
+#  Zune — 사이트 기본 설정
+#  이 파일을 고친 뒤에는 로컬 서버(jekyll serve)를 재시작해야 반영됩니다.
+# ─────────────────────────────────────────────
+
+title: ZUNE
+description: 직접 부숴보고, 이해한 만큼 기록하는 보안 블로그
+lang: ko
+timezone: Asia/Seoul
+
+# GitHub Pages 주소
+#  - 사용자 사이트(아이디.github.io 레포)라면 baseurl은 "" 그대로
+#  - 프로젝트 레포(예: 아이디.github.io/blog)라면 baseurl: "/blog"
+url: "https://junseopark0216.github.io"
+baseurl: ""
+
+author:
+  name: Junseo Park
+
+# 글 주소 형태: /ctf/locked-out/
+permalink: /:categories/:title/
+
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter_opts:
+    disable: false
+
+# GitHub Pages 기본 빌드에서 쓸 수 있는 플러그인만 사용합니다.
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+defaults:
+  - scope: { path: "", type: posts }
+    values:
+      layout: post
+      toc: true
+  - scope: { path: "" }
+    values:
+      layout: page
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .github

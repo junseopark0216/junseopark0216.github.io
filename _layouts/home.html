@@ -1,0 +1,58 @@
+---
+layout: default
+body_class: is-home
+---
+{%- assign p = site.data.profile -%}
+<section class="hero">
+  <canvas class="halftone" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <p class="term" aria-label="whoami: {{ p.whoami }}">
+      <span class="t-user">zune@lab</span>:<span class="t-path">~</span>$ <span class="t-cmd" data-type="whoami">whoami</span><span class="t-caret" aria-hidden="true"></span>
+    </p>
+    <p class="term term-out" data-out>{{ p.whoami }}</p>
+    <h1 class="hero-title">{{ p.handle }}</h1>
+    <p class="hero-name">{{ p.name }}{% if p.name_ko %} · {{ p.name_ko }}{% endif %} — {{ p.role }}</p>
+    <div class="hero-actions">
+      <a class="btn btn-solid" href="{{ '/posts/' | relative_url }}">전체 글 보기</a>
+      <a class="btn" href="{{ '/about/' | relative_url }}">자기소개</a>
+    </div>
+  </div>
+</section>
+
+<section class="wrap section" aria-labelledby="cat-h">
+  <div class="section-head">
+    <h2 id="cat-h">Categories<span class="dot">.</span></h2>
+  </div>
+  <ul class="cat-grid">
+    {%- for c in site.data.categories %}
+    {%- assign list = site.categories[c.key] %}
+    {%- assign latest = list | first %}
+    <li class="cat-card">
+      <a href="{{ '/' | append: c.key | append: '/' | relative_url }}" class="cat-link">
+        <div class="cat-top">
+          {% include glyph.html name=c.glyph %}
+          <span class="cat-path">~/{{ c.key }}</span>
+        </div>
+        <h3>{{ c.name }}</h3>
+        <p class="cat-desc">{{ c.desc }}</p>
+        <div class="cat-foot">
+          <span class="cat-count"><b>{{ list | size }}</b> posts</span>
+          {%- if latest %}<span class="cat-latest">최근 · {{ latest.title }}</span>{% else %}<span class="cat-latest is-empty">첫 글을 기다리는 중</span>{% endif %}
+        </div>
+      </a>
+    </li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="wrap section" aria-labelledby="recent-h">
+  <div class="section-head">
+    <h2 id="recent-h">Recent<span class="dot">.</span></h2>
+    <a class="section-more" href="{{ '/posts/' | relative_url }}">View all {{ site.posts | size }}</a>
+  </div>
+  <ul class="post-list">
+    {%- for post in site.posts limit: 6 %}
+      {% include post-row.html post=post %}
+    {%- endfor %}
+  </ul>
+</section>

@@ -1,0 +1,50 @@
+---
+layout: default
+body_class: is-cat
+---
+{%- assign cat = site.data.categories | where: "key", page.category_key | first -%}
+{%- assign list = site.categories[cat.key] -%}
+<section class="cat-hero wrap">
+  <p class="term"><span class="t-user">zune@lab</span>:<span class="t-path">~</span>$ cd {{ cat.key }} &amp;&amp; ls | wc -l</p>
+  <p class="term term-out is-shown">{{ list | size }}</p>
+  <div class="cat-hero-title">
+    {% include glyph.html name=cat.glyph %}
+    <h1>{{ cat.name }}</h1>
+  </div>
+  <p class="cat-hero-desc">{{ cat.desc }}</p>
+  <ul class="cat-switch" aria-label="다른 카테고리">
+    {%- for c in site.data.categories %}
+    <li><a href="{{ '/' | append: c.key | append: '/' | relative_url }}" {% if c.key == cat.key %}aria-current="page"{% endif %}>{{ c.name }}</a></li>
+    {%- endfor %}
+  </ul>
+</section>
+
+<section class="wrap section">
+  {%- if cat.groups %}
+  <div class="group-tabs" role="tablist" aria-label="{{ cat.name }} 분류">
+    <button type="button" class="group-tab is-active" data-group-filter="" role="tab" aria-selected="true">전체 <em>{{ list | size }}</em></button>
+    {%- for g in cat.groups %}
+    {%- assign gcount = list | where: "group", g.key | size %}
+    <button type="button" class="group-tab" data-group-filter="{{ g.key }}" role="tab" aria-selected="false">{{ g.name }} <em>{{ gcount }}</em></button>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+
+  {%- if list.size > 0 %}
+  {%- assign years = list | group_by_exp: "p", "p.date | date: '%Y'" %}
+  {%- for y in years %}
+  <div class="year-block" data-year-block>
+    <h2 class="year">{{ y.name }}</h2>
+    <ul class="post-list">
+      {%- for post in y.items %}{% include post-row.html post=post hide_cat=true %}{% endfor %}
+    </ul>
+  </div>
+  {%- endfor %}
+  <p class="group-empty" data-group-empty hidden>이 분류에는 아직 글이 없습니다.</p>
+  {%- else %}
+  <div class="empty">
+    <p>아직 이 카테고리에 글이 없습니다.</p>
+    <p class="empty-hint"><code>_posts/</code>에 <code>category: {{ cat.key }}</code>를 넣은 글을 추가하면 여기에 나타납니다.</p>
+  </div>
+  {%- endif %}
+</section>

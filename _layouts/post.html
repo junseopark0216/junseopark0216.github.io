@@ -1,0 +1,57 @@
+---
+layout: default
+body_class: is-post
+---
+{%- assign ckey = page.categories | first -%}
+{%- assign cat = site.data.categories | where: "key", ckey | first -%}
+{%- assign chars = content | strip_html | size -%}
+{%- assign words = chars | divided_by: 500 | floor | plus: 1 -%}
+{%- assign has_langs = false -%}
+{%- if page.langs and page.langs.size > 1 %}{% assign has_langs = true %}{% endif -%}
+<article class="post"{% if has_langs %} data-langs="{{ page.langs | join: ',' }}"{% endif %}>
+  <header class="post-head wrap-narrow">
+    {%- if cat %}
+    <a class="post-crumb" href="{{ '/' | append: cat.key | append: '/' | relative_url }}">
+      <span class="t-path">~/{{ cat.key }}</span> <span>{{ cat.name }}</span>
+    </a>
+    {%- endif %}
+    <h1 class="post-title">{{ page.title }}</h1>
+    {%- if page.subtitle %}<p class="post-sub">{{ page.subtitle }}</p>{% endif %}
+    <p class="post-meta">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%Y년 %-m월 %-d일" }}</time>
+      {%- if page.last_modified_at %}<span>수정 {{ page.last_modified_at | date: "%Y.%m.%d" }}</span>{% endif %}
+      <span>약 {{ words }}분 분량</span>
+    </p>
+    {%- if page.tags.size > 0 %}
+    <ul class="post-tags">{% for t in page.tags %}<li class="chip chip-mono">#{{ t }}</li>{% endfor %}</ul>
+    {%- endif %}
+    {%- if has_langs %}
+    <div class="lang-toggle" role="tablist" aria-label="본문 언어 선택">
+      {%- for l in page.langs %}
+      <button type="button" class="lang-btn" data-lang-switch="{{ l }}" role="tab" aria-selected="false">{% if l == 'ko' %}한국어{% elsif l == 'en' %}English{% else %}{{ l }}{% endif %}</button>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+  </header>
+
+  <div class="post-grid">
+    <div class="prose wrap-narrow" id="prose">
+      {{ content }}
+    </div>
+    {%- if page.toc %}
+    <aside class="toc" aria-label="목차">
+      <p class="toc-title">목차</p>
+      <ol id="toc-list"></ol>
+    </aside>
+    {%- endif %}
+  </div>
+
+  <nav class="post-nav wrap-narrow" aria-label="이전·다음 글">
+    {%- if page.previous %}
+    <a class="pn pn-prev" href="{{ page.previous.url | relative_url }}"><span>이전 글</span>{{ page.previous.title }}</a>
+    {%- else %}<span></span>{% endif %}
+    {%- if page.next %}
+    <a class="pn pn-next" href="{{ page.next.url | relative_url }}"><span>다음 글</span>{{ page.next.title }}</a>
+    {%- endif %}
+  </nav>
+</article>

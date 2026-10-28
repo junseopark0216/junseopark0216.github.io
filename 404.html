@@ -1,0 +1,12 @@
+---
+layout: default
+title: 페이지를 찾을 수 없음
+permalink: /404.html
+---
+<section class="cat-hero wrap notfound">
+  <p class="term"><span class="t-user">zune@lab</span>:<span class="t-path">~</span>$ cat {{ page.url | default: "this-page" }}</p>
+  <p class="term term-out is-shown">cat: No such file or directory</p>
+  <div class="cat-hero-title"><h1>404<span class="dot">.</span></h1></div>
+  <p class="cat-hero-desc">주소가 바뀌었거나 지워진 글입니다. 검색(Ctrl+K)으로 찾거나 홈에서 다시 시작해 보세요.</p>
+  <div class="hero-actions"><a class="btn btn-solid" href="{{ '/' | relative_url }}">홈으로</a><button class="btn" type="button" data-search-open>글 검색</button></div>
+</section>

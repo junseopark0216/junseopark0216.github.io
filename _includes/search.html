@@ -1,0 +1,13 @@
+<div class="search" id="search" hidden>
+  <div class="search-backdrop" data-search-close></div>
+  <div class="search-panel" role="dialog" aria-modal="true" aria-label="글 검색">
+    <label class="search-field">
+      <span class="t-user">grep</span>
+      <input type="search" id="search-input" placeholder="제목, 태그, 내용으로 검색" autocomplete="off">
+      <kbd>Esc</kbd>
+    </label>
+    <ul class="search-results" id="search-results"></ul>
+    <p class="search-empty" id="search-empty" hidden>일치하는 글이 없습니다. 다른 키워드나 태그 이름으로 찾아보세요.</p>
+  </div>
+</div>
+<script>window.SEARCH_INDEX = "{{ '/search.json' | relative_url }}";</script>

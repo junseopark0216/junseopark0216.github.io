@@ -1,0 +1,14 @@
+{%- assign p = site.data.profile -%}
+<footer class="footer">
+  <div class="footer-inner">
+    <p class="footer-prompt"><span class="t-user">zune@lab</span>:<span class="t-path">~</span>$ exit</p>
+    <p class="footer-links">
+      {%- if p.links.github != "" %}<a href="https://github.com/{{ p.links.github }}">GitHub</a>{% endif -%}
+      {%- if p.links.linkedin != "" %}<a href="{{ p.links.linkedin }}">LinkedIn</a>{% endif -%}
+      {%- if p.links.discord_url != "" %}<a href="{{ p.links.discord_url }}">Discord</a>
+      {%- elsif p.links.discord != "" %}<button type="button" class="link-copy" data-copy="{{ p.links.discord }}" title="{{ p.links.discord }} · 클릭하면 복사">Discord</button>{% endif -%}
+      {%- if p.links.email != "" %}<a href="mailto:{{ p.links.email }}">Email</a>{% endif -%}
+      <a href="{{ '/feed.xml' | relative_url }}">RSS</a>
+    </p>
+  </div>
+</footer>
