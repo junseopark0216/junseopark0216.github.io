@@ -1,7 +1,7 @@
 ---
 title: "pwn_study_tool — 워게임용 분석 보조 도구"
 subtitle: "반복되는 자잘한 작업을 한 창에 모아 둔 학습용 GUI"
-date: 2026-11-05 09:00:00 +0900   # 발행 시 날짜 수정, _posts 로 옮기며 파일명 앞에 YYYY-MM-DD- 붙이기
+date: 2026-05-30 09:00:00 +0900
 category: dev
 tags: ["tool", "tkinter", "pwnable", "gui", "python"]
 ---

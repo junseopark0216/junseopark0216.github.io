@@ -1,7 +1,7 @@
 ---
 title: "웹 해킹 기초 — SQL Injection & 개발자 도구"
 subtitle: "우리콘 준비하며 PortSwigger 랩으로 정리한 SQLi와 브라우저 분석"
-date: 2026-11-05 09:00:00 +0900   # 발행 시 날짜 수정, _posts 로 옮기며 파일명 앞에 YYYY-MM-DD- 붙이기
+date: 2026-09-01 09:00:00 +0900
 category: tech
 group: doc
 tags: ["web", "sqli", "burp", "devtools"]

@@ -1,7 +1,7 @@
 ---
 title: "우리콘 버그바운티 회고록"
 subtitle: "찾은 취약점 0개"
-date: 2026-11-05 09:00:00 +0900   # 발행 시 날짜 수정, _posts 로 옮기며 파일명 앞에 YYYY-MM-DD- 붙이기
+date: 2026-09-18 09:00:00 +0900
 category: bugbounty
 tags: ["bugbounty", "web", "회고"]
 ---

@@ -1,7 +1,7 @@
 ---
 title: "x86-64 어셈블리 & 메모리 구조 기초"
 subtitle: "익스플로잇을 이해하려면 결국 여기부터 — 레지스터·메모리·스택 프레임"
-date: 2026-11-05 09:00:00 +0900   # 발행 시 날짜 수정, _posts 로 옮기며 파일명 앞에 YYYY-MM-DD- 붙이기
+date: 2026-04-10 09:00:00 +0900
 category: tech
 group: doc
 tags: ["assembly", "x86-64", "memory", "stack", "calling-convention"]
