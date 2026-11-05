@@ -50,8 +50,8 @@ awards: []
 education: []
 
 projects:
-  - name: Junseo's Multi-Tool
-    url: https://github.com/junseopark0216/multi_tool
+  - name: pwn_study_tool
+    url: https://github.com/junseopark0216/pwn_study_tool
     status: 진행 중      # 비워 두면 배지가 숨겨집니다.
     detail: >-
       워게임 풀이에 필요한 자잘한 작업(GDB 출력 정리·스택 분석·엔디안/Base64 변환)을
