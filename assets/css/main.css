@@ -378,7 +378,8 @@ a.chip-cat:hover { color: var(--brass-ink); filter: brightness(.96); }
 
 /* Rouge(GitHub Pages 기본 하이라이터) 구문 색 — 코드 배경은 항상 어둡게. */
 .prose .highlight { background: none; margin: 0; }
-.prose .highlight pre, .prose pre.highlight { margin: 0; }
+.prose .highlight pre, .prose pre.highlight { margin: 0; background: #15171e; }
+:root[data-theme="dark"] .prose .highlight pre, :root[data-theme="dark"] .prose pre.highlight { background: #0f1116; }
 .prose .highlight .c, .prose .highlight .c1, .prose .highlight .cm, .prose .highlight .cs { color: #6b7686; font-style: italic; }
 .prose .highlight .cp { color: #8a93a6; }                         /* 전처리기 */
 .prose .highlight .k, .prose .highlight .kd, .prose .highlight .kn,
