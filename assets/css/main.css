@@ -228,6 +228,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, .cat-link:focus-visi
 
 /* ---------- 글 목록 (shell ls 스타일) ---------- */
 .post-list { list-style: none; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
 .post-row {
   display: grid; grid-template-columns: 112px 1fr; gap: 20px; align-items: baseline;
   padding: 18px 10px; border-top: 1px solid var(--line);
