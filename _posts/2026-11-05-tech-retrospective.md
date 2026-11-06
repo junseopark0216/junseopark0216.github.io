@@ -1,5 +1,5 @@
 ---
-title: "활동 회고 — 무엇이 부족했고, 어떻게 채울 것인가"
+title: "활동 회고 · 부족했던 점과 채울 방법"
 subtitle: "지금까지의 보안 공부를 한곳에 정리하며"
 date: 2026-11-05 09:00:00 +0900   # 발행 시 날짜 수정, _posts 로 옮기며 파일명 앞에 YYYY-MM-DD- 붙이기
 category: tech
@@ -13,7 +13,7 @@ tags: ["회고", "retrospective", "포트폴리오"]
 
 | 카테고리 | 활동 |
 |----------|------|
-| **개발** | [pwn_study_tool](/dev/pwn-study-tool/) — 워게임용 분석 보조 도구 |
+| **개발** | [pwn_study_tool](/dev/pwn-study-tool/) · 워게임 분석 보조 도구 |
 | **CTF/Wargame** | [BrunnerCTF 2026](/ctf/brunnerctf-2026-locked-out/) 풀이 · [CSAPP Bomb Lab](/ctf/ctf-bomb-lab/) · 드림핵 워게임 다수 |
 | **Bug Bounty** | [우리콘 버그바운티](/bugbounty/bugbounty-woorichon/) 참가 |
 | **블로그/기술문서** | [어셈블리·메모리](/tech/tech-asm-memory/) · [Pwn 익스플로잇 기법](/tech/tech-pwn-exploitation/) · [웹 해킹 기초](/tech/tech-web-basics/) · [WHS OFAD 모의해킹](/tech/tech-whs-ofad/) · [P4C 회고](/tech/tech-p4c-회고/) |

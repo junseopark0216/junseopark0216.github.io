@@ -1,5 +1,5 @@
 ---
-title: "pwn_study_tool — 워게임용 분석 보조 도구"
+title: "pwn_study_tool"
 subtitle: "반복되는 자잘한 작업을 한 창에 모아 둔 학습용 GUI"
 date: 2026-05-30 09:00:00 +0900
 category: dev

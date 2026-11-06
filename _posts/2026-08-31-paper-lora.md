@@ -1,6 +1,6 @@
 ---
 title: "[논문 리뷰] LoRA: Low-Rank Adaptation of Large Language Models"
-subtitle: "파인튜닝, 및 실습"
+subtitle: "파인튜닝 원리와 실습"
 date: 2026-08-31 09:00:00 +0900   # _posts 로 옮길 때 파일명 앞에 2026-08-31- 붙이기
 category: paper
 group: paper

@@ -1,5 +1,5 @@
 ---
-title: "웹 해킹 기초 — SQL Injection & 개발자 도구"
+title: "웹 해킹 기초 · SQL Injection과 개발자 도구"
 subtitle: "우리콘 준비하며 PortSwigger 랩으로 정리한 SQLi와 브라우저 분석"
 date: 2026-09-01 09:00:00 +0900
 category: tech

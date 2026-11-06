@@ -21,9 +21,9 @@
   --shadow:     18px 18px 0 -12px rgba(27,27,26,.08);
 
   /* 타이포 */
-  --sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+  --sans: "IBM Plex Sans KR", -apple-system, BlinkMacSystemFont,
           "Apple SD Gothic Neo", "Segoe UI", Roboto, sans-serif;
-  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   /* 레이아웃 */
   --wrap: 1080px;
