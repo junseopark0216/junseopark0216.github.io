@@ -118,4 +118,4 @@ movl $5, %eax   ; AT&T
 
 Return Address를 내가 원하는 값으로 덮으면, 함수가 `ret` 하는 순간 그 주소로 `rip`가 점프한다 — 이게 모든 스택 기반 익스플로잇의 출발점이다.
 
-> 여기서부터 "덮은 주소에 뭘 넣느냐(쉘코드 / libc / ROP)"와 "보호기법을 어떻게 걷어내느냐"로 갈라진다. 그 흐름은 『[Pwn 익스플로잇 기법 정리](/tech/tech-pwn-exploitation/)』에, 실제 적용 사례는 『[DogLang OOB 취약점 분석 & 익스플로잇](/tech/tech-doglang-exploit/)』에 이어진다.
+> 여기서부터 "덮은 주소에 뭘 넣느냐(쉘코드 / libc / ROP)"와 "보호기법을 어떻게 걷어내느냐"로 갈라진다. 그 흐름은 『[Pwn 익스플로잇 기법 정리](/tech/tech-pwn-exploitation/)』에 이어진다.
