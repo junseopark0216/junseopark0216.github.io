@@ -223,7 +223,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, .cat-link:focus-visi
 .cat-foot { display: flex; align-items: baseline; gap: 12px; padding-top: 15px; border-top: 1px dashed var(--line-strong); }
 .cat-count { font-family: var(--mono); font-size: 13px; color: var(--ink-soft); white-space: nowrap; }
 .cat-count b { color: var(--brass-ink); }
-.cat-latest { font-size: 12.5px; color: var(--ink-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cat-latest { flex: 1; min-width: 0; font-size: 12.5px; color: var(--ink-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cat-latest.is-empty { font-style: italic; }
 
 /* ---------- 글 목록 (shell ls 스타일) ---------- */
