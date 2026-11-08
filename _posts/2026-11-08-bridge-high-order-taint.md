@@ -136,7 +136,7 @@ DIR882에서 AEH는 액션 키워드 `SetNetwork` 요청을 처리하는 핸들�
 
 **2. BDG 구성**
 
-- OD-ICP: `vuln_func`는 키 이름을 `"lan" + "0" + "_management_link"`처럼 실행 중에 조립했다. 즉, `rc` 바이너리 안에는 `lan0_management_link`라는 문자열이 존재하지 않았고, 이 때문에 단순한 문자열 검색으로는 쓰는 쪽과 짝을 지을 수 없다. OD-ICP는 이걸 계산해서 `lan0_management_link`라는 키 이름을 복원한다. (Listing 2-3 `vuln_func()` 함수 참조)
+- OD-ICP(온디맨드 함수 간 상수 전파): `vuln_func`는 키 이름을 `"lan" + "0" + "_management_link"`처럼 실행 중에 조립했다. 즉, `rc` 바이너리 안에는 `lan0_management_link`라는 문자열이 존재하지 않았고, 이 때문에 단순한 문자열 검색으로는 쓰는 쪽과 짝을 지을 수 없다. OD-ICP는 이걸 계산해서 `lan0_management_link`라는 키 이름을 복원한다. (Listing 2-3 `vuln_func()` 함수 참조)
 - BDG 간선: `prog.cgi`의 `nvram_safe_set("lan0_management_link", v1)`(쓰기)와 `rc`의 `vuln_func` 안 `nvram_safe_get`(읽기)이 같은 키로 이어져, 데이터가 `prog.cgi`에서 NVRAM을 거쳐 `rc`의 `system()`까지 가는 길이 생긴다.
 
 **3. ADG 구성**
