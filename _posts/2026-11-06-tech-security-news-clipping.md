@@ -15,6 +15,10 @@ tags: ["보안뉴스", "클리핑", "나이츠프론티어", "daily"]
 
 ## 2026년 11월
 
+### 11/08
+
+- [ChatGPT Lockdown Mode 우회 취약점 — Check Point 발견, 숨은 팝업 트릭으로 사용자 모르게 전체 대화 기록 탈취·가짜 창·멀웨어 유포 가능 (ChatGPT Classic 데스크톱 앱)](https://x.com/the_cyber_news/status/2119247150672695322)
+
 ### 11/07
 
 - [WordPress 코어 인증 불필요 RCE(CVE-2026-119977) — 로그인 없이 코드 실행 가능, 패치 당일부터 24만 건+ 공격 시도, CVSS 8.1(High), 미패치 4.7~7.1.3 영향](https://x.com/The_Cyber_News/status/2118970448402952590?s=46)
