@@ -207,9 +207,9 @@ a:focus-visible, button:focus-visible, input:focus-visible, .cat-link:focus-visi
 
 /* ---------- 카테고리 카드 ---------- */
 .cat-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
-.cat-card { position: relative; }
+.cat-card { position: relative; display: flex; }
 .cat-link {
-  display: flex; flex-direction: column; height: 100%;
+  display: flex; flex-direction: column; flex: 1;
   padding: 26px 26px 22px; background: var(--surface);
   border: 1px solid var(--line); border-radius: var(--radius);
   transition: transform .2s, border-color .2s, box-shadow .2s;
