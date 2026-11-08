@@ -125,10 +125,30 @@ ADG를 도입함으로써, 기존 도구처럼 경보만 울리는 데서 그치
 
 > 전체 구조도는 원문 논문의 Figure 2를 참고하자. ([원문 보기](https://doi.org/10.1109/SP63933.2026.00001))
 
-- 진입점 추출: 프론트엔드와 백엔드를 비교해 경계 바이너리를 찾고, 그 안에서 유효한 AEH와 IPF(입력 파싱 함수)를 골라낸다.
-- BDG 구성: 온디맨드 함수 간 상수 전파(OD-ICP)로 실행 중에 만들어지는 IPC 키워드를 복원하고, 정적 키워드와 합쳐 IPC 함수의 짝(쓰는 곳–읽는 곳)을 맞춘다. 이 짝을 통해 오염된 데이터가 영구 저장소를 통로 삼아 서로 다른 바이너리로 여러 단계에 걸쳐 전파되는 것을 따라갈 수 있고, 이를 바탕으로 BDG를 만든다.
-- ADG 구성: IPC의 암묵적·명시적 제어 의존성을 모두 분석해 액션 핸들러 사이의 제어 관계를 정한다.
-- 취약점 분류: BDG와 ADG의 오염 정보를 따라가며 취약점을 찾는다. 여러 AEH가 함께 관여해야 터지면 high-order 취약점으로, 하나의 AEH와 하나의 요청만으로 터지면 일차 취약점으로 분류한다.
+### 실제 사례(DIR882) 기반 전체 흐름(4단계) 설명
+
+> Figure 1에 그려진 그림을 참조하며 작성했다. ([원문 보기](https://doi.org/10.1109/SP63933.2026.00001))
+
+**1. 진입점 추출**
+
+DIR882에서 AEH는 액션 키워드 `SetNetwork` 요청을 처리하는 핸들러와 `SetVLAN` 요청을 처리하는 핸들러이고, IPF는 사용자가 보낸 `DeviceName` 값을 꺼내는 함수(`webGetVarString`)이다. (Listing 2-1, 2-2의 `websFormDefine` 참조)
+이 단계를 통해 바이너리 안에 숨은 핸들러와 입력 지점을 찾아 taint 분석의 출발점으로 삼는다.
+
+**2. BDG 구성**
+
+- OD-ICP: `vuln_func`는 키 이름을 `"lan" + "0" + "_management_link"`처럼 실행 중에 조립했다. 즉, `rc` 바이너리 안에는 `lan0_management_link`라는 문자열이 존재하지 않았고, 이 때문에 단순한 문자열 검색으로는 쓰는 쪽과 짝을 지을 수 없다. OD-ICP는 이걸 계산해서 `lan0_management_link`라는 키 이름을 복원한다. (Listing 2-3 `vuln_func()` 함수 참조)
+- BDG 간선: `prog.cgi`의 `nvram_safe_set("lan0_management_link", v1)`(쓰기)와 `rc`의 `vuln_func` 안 `nvram_safe_get`(읽기)이 같은 키로 이어져, 데이터가 `prog.cgi`에서 NVRAM을 거쳐 `rc`의 `system()`까지 가는 길이 생긴다.
+
+**3. ADG 구성**
+
+- ADG 간선: `SetVLAN`이 `notify_rc`를 통해 `sendto`로 127.0.0.1:6789에 `start_vlanall` 메시지를 보내고, `rc`가 `recvfrom`으로 받아서 값이 `start_vlanall`이면 `vuln_func()`로 분기한다. (Listing 2-3 if/else문 참조)
+- 이건 암묵적 제어다. `SetVLAN`이 `rc`를 직접 실행한 게 아니라 메시지만 보냈고, 어떤 코드가 실행될지는 받는 쪽(`rc`)이 메시지 값을 보고 정하기 때문이다.
+- 반대로 명시적 제어는 `httpd`가 `system("sysctl -p 14")`로 `sysctl`을 직접 실행하는 것처럼, 누가 누구를 실행하는지가 코드에 바로 드러나는 경우다.
+
+**4. 취약점 분류**
+
+BDG와 ADG의 오염 정보를 따라가며 취약점을 찾는다. 여러 AEH가 함께 관여해야 터지면 high-order 취약점으로, 하나의 AEH와 하나의 요청만으로 터지면 일차 취약점으로 분류한다.
+DIR882 사례에서 값을 쓴 요청은 `SetNetwork`, 꺼내 쓴 요청은 `SetVLAN`이다. 둘이 다르므로 high-order로 분류된다.
 
 진입점 추출에서 Bridge가 찾는 AEH의 대표적인 코드 패턴은 세 가지다.
 
