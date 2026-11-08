@@ -37,7 +37,7 @@ body_class: is-home
         <p class="cat-desc">{{ c.desc }}</p>
         <div class="cat-foot">
           <span class="cat-count"><b>{{ list | size }}</b> posts</span>
-          {%- if latest %}<span class="cat-latest">최근 · {{ latest.title }}</span>{% else %}<span class="cat-latest is-empty">첫 글을 기다리는 중</span>{% endif %}
+          {%- if latest %}<span class="cat-latest">최근 · {{ latest.title | truncate: 34, "…" }}</span>{% else %}<span class="cat-latest is-empty">첫 글을 기다리는 중</span>{% endif %}
         </div>
       </a>
     </li>
