@@ -9,11 +9,17 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 매일 X에 올라오는 **최신 보안 이슈**를 한 곳에 모은다. 
 
+*최근 업데이트: {{ site.time | date: "%Y-%m-%d" }}*
+
 > **규칙** — 하루 최소 1건, 월 최소 28건. 새로 추가한 건은 각 월 블록의 **맨 위**에 쌓는다(최신이 위로).
 
 ---
 
 ## 2026년 11월
+
+### 11/09
+
+- [React Server Components 인증 불필요 RCE(GHSA-xqc2-xf4c-x3h3) — 로그인 없이 원격 코드 실행, CVSS v4 9.5(Critical), react-server-dom-webpack/parcel/turbopack 영향 (악용 조건은 까다로움)](https://x.com/The_Cyber_News/status/2119713352507335105?s=12)
 
 ### 11/08
 
