@@ -1,7 +1,7 @@
 ---
 title: "Lakera 사이트를 활용한 프롬프트 인젝션 실습"
 subtitle: "Solace AI (Lakera) 프롬프트 인젝션 라이트업"
-date: 2026-11-10 14:30:00 +0900
+date: 2026-11-10 14:27:00 +0900
 category: ctf
 group: wargame
 tags: ["프롬프트 인젝션", "LLM", "Lakera", "AI 보안", "jailbreak"]
