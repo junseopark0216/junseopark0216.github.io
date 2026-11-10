@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/10
+
+- [Notepad++ 8.9.9 — 취약점 6건 패치(CVE 미할당), WM_COPYDATA 기반 조건부 플러그인 명령 실행·메모리 노출·버퍼 오버플로 등 수정](https://x.com/The_Cyber_News/status/2119841449709883738)
+
 ### 11/09
 
 - [React Server Components 인증 불필요 RCE(GHSA-xqc2-xf4c-x3h3) — 로그인 없이 원격 코드 실행, CVSS v4 9.5(Critical), react-server-dom-webpack/parcel/turbopack 영향 (악용 조건은 까다로움)](https://x.com/The_Cyber_News/status/2119713352507335105?s=12)
