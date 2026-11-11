@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/11
+
+- [Outlook 0-day 악용 중 — 특수 제작 메시지 파일을 열면 외부 콘텐츠 경고 없이 공격자 네트워크에 연결돼 Windows 인증 해시 유출, 계정·사전 접근 불필요](https://x.com/the_cyber_news/status/2120411774860378507?a=gn_AX65BRFOBiAwyr6Y&s=46)
+
 ### 11/10
 
 - [Notepad++ 8.9.9 — 취약점 6건 패치(CVE 미할당), WM_COPYDATA 기반 조건부 플러그인 명령 실행·메모리 노출·버퍼 오버플로 등 수정](https://x.com/The_Cyber_News/status/2119841449709883738)
