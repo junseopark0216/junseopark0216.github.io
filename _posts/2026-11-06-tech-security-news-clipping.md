@@ -20,6 +20,7 @@ tags: ["보안뉴스", "클리핑", "daily"]
 ### 11/12
 
 - [Node.js 보안 결함 16건 패치 — CVE-2026-123864(High): 0-length TLS write가 유발한 UAF·OOB read로 인증 없이 타 연결 메모리(TLS 개인키 등) 유출, v22.23.5/v24.22.3/v26.13.1에서 수정](https://x.com/The_Cyber_News/status/2120723250011607191?s=46)
+- [Ubuntu 26.10(Stonking Stingray), curl에 인증서 폐기(revocation) 검사 추가 — 폐기된 SSL 인증서 HTTPS 연결 차단, upki 지원 도입](https://x.com/The_Cyber_News/status/2120569228508254284)
 
 ### 11/11
 
