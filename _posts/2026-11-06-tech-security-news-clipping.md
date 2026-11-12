@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/12
+
+- [Node.js 보안 결함 16건 패치 — CVE-2026-123864(High): 0-length TLS write가 유발한 UAF·OOB read로 인증 없이 타 연결 메모리(TLS 개인키 등) 유출, v22.23.5/v24.22.3/v26.13.1에서 수정](https://x.com/The_Cyber_News/status/2120723250011607191?s=46)
+
 ### 11/11
 
 - [Outlook 0-day 악용 중 — 특수 제작 메시지 파일을 열면 외부 콘텐츠 경고 없이 공격자 네트워크에 연결돼 Windows 인증 해시 유출, 계정·사전 접근 불필요](https://x.com/the_cyber_news/status/2120411774860378507?a=gn_AX65BRFOBiAwyr6Y&s=46)
