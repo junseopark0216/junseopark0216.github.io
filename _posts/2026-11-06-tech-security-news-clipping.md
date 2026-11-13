@@ -17,6 +17,11 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/13
+
+- [Europol Operation Endgame — Gootloader·CastleRAT·StealC 인프라 무력화, 서버 235대·도메인 257개 차단, 피해자 데이터셋 640만 건 회수(랜섬웨어 초기 침투·정보 탈취용 서비스형 사이버범죄 겨냥)](https://x.com/The_Cyber_News/status/2120925296681783789)
+- [Microsoft 365 대규모 장애 — 11/12 미주 Exchange Online 메일함 접속 장애로 시작해 Outlook·Teams·SharePoint·Copilot·Defender XDR로 확산, 10시간 넘게 지속, 복구된 서버가 트래픽 재개 시 다시 먹통·완전 복구 시점 미정](https://x.com/The_Cyber_News/status/2121128140366098654)
+
 ### 11/12
 
 - [Node.js 보안 결함 16건 패치 — CVE-2026-123864(High): 0-length TLS write가 유발한 UAF·OOB read로 인증 없이 타 연결 메모리(TLS 개인키 등) 유출, v22.23.5/v24.22.3/v26.13.1에서 수정](https://x.com/The_Cyber_News/status/2120723250011607191?s=46)
