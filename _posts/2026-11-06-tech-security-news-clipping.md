@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/14
+
+- [Check Point Gaia OS 0-day 악용 중 — CVE-2026-123039(CVSS 7.8): DynamicCLI 서비스 결함으로 로컬 사용자가 root 권한 획득, 방화벽·관리 시스템 위험, 고객 수십 곳 대상 실제 악용 확인, CISA KEV 등재(11/13)](https://x.com/The_Cyber_News/status/2121502390960414879)
+
 ### 11/13
 
 - [Europol Operation Endgame — Gootloader·CastleRAT·StealC 인프라 무력화, 서버 235대·도메인 257개 차단, 피해자 데이터셋 640만 건 회수(랜섬웨어 초기 침투·정보 탈취용 서비스형 사이버범죄 겨냥)](https://x.com/The_Cyber_News/status/2120925296681783789)
