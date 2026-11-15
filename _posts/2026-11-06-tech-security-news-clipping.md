@@ -17,6 +17,12 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/15
+
+- [FBI FLASH 경보 — 공격자가 오픈소스 보안 테스트 프레임워크 ARTEX(Go, 외부 LLM을 연결해 지시를 명령으로 변환) AI 에이전트로 네트워크 공격 자동화, 탈취 계정·노출 앱·클라우드 권한을 엮어 일부는 3시간 안에 특권 접근 획득(11/13 발표)](https://x.com/The_Cyber_News/status/2121786067217183153)
+- [M365 장애 악용 피싱 진행 중 — 11/12 Microsoft 365 장애를 미끼로 MS 서비스 상태 공지를 흉내 내고 실제 Exchange Online 장애 번호 EX1550543을 인용, "장애 중 보류된 메일을 복구하지 않으면 24시간 안에 삭제된다"며 가짜 복구 링크로 비밀번호 탈취, Microsoft Threat Intelligence가 11/13 탐지](https://x.com/The_Cyber_News/status/2121569566749044901)
+
+
 ### 11/14
 
 - [Check Point Gaia OS 0-day 악용 중 — CVE-2026-123039(CVSS 7.8): DynamicCLI 서비스 결함으로 로컬 사용자가 root 권한 획득, 방화벽·관리 시스템 위험, 고객 수십 곳 대상 실제 악용 확인, CISA KEV 등재(11/13)](https://x.com/The_Cyber_News/status/2121502390960414879)
