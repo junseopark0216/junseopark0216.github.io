@@ -1001,7 +1001,7 @@ libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (0x00007ffff7d8a000)
 > 
 > 
 > 
-> ### `libc.sym`는`libc.address`를 더해서 돌려준다
+> #### `libc.sym`는`libc.address`를 더해서 돌려준다
 > 
 > libc.sym이 돌려주는 값은 항상 **`파일오프셋 + libc.address`** 다.
 > 
@@ -2078,7 +2078,7 @@ int main() {
 > 
 > 
 > 
-> ### `%n` vs `%6$n` 차이
+> #### `%n` vs `%6$n` 차이
 > 
 > | 문법 | 의미 |
 > | --- | --- |
