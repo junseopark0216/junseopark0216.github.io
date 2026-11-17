@@ -17,6 +17,11 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/17
+
+- [Google GTIG·Mandiant AI Threat Tracker — 공격자가 챗봇 활용을 넘어 AI 에이전트로 스캔·침투·내부 확산까지 사람 개입 거의 없이 자동화, 사이버범죄·스파이·영향력 공작 전반에서 AI 악용이 "임계 변곡점" 도달, 공격 시간 단축·규모 확대·다단계 침입을 기계 속도로 수행(11/16 발표)](https://x.com/The_Cyber_News/status/2122434785108771314)
+- [Optimizely Web 공급망 공격 — 11/16 실험 플랫폼에 악성 JavaScript가 심겨 Zoom·BBC·CNN·Salesforce·GitLab·IKEA·HSBC·Equifax·Air France-KLM·Ledger·Peacock 등 178개 조직 사이트 방문자에게 유포, 암호화폐 지갑 주소 바꿔치기·결제 카드 정보 탈취·쿠키·스크린샷 수집, iPhone·iPad 사용자에게 Coruna·DarkSword 익스플로잇 킷 배포](https://x.com/The_Cyber_News/status/2122506787614245103)
+
 ### 11/16
 
 - [Claude Code로 1994년식 Jeep Cherokee ECU 리버스 엔지니어링 — OBD2 포트가 없는 구형 ECU가 크라이슬러 구형 SCI 프로토콜을 쓴다는 걸 파악, $3 Arduino Nano로 내부 코드를 읽고 복사한 뒤 실행까지 성공(약 1주), NOx 과다로 떨어졌던 캘리포니아 배출가스 검사 통과](https://x.com/The_Cyber_News/status/2122152438815920160)
