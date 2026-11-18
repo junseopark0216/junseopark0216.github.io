@@ -7,11 +7,8 @@ group: wargame
 tags: ["pwn", "pwnable", "wargame"]
 ---
 
-HSpace의 시스템해킹 워게임 **Space Alone**을 Ch.1부터 Ch.10까지 전부 클리어하며 정리한 라이트업이다. 스택 오버플로우 기초부터 ROP·ret2libc·포맷 스트링까지 단계별로 다룬다.
-
+HSpace의 시스템해킹 워게임 **Space Alone**을 Ch.1부터 Ch.10까지 전부 클리어하며 정리한 라이트업
 > 대상 워게임: [hspace-io/Space_Alone](https://github.com/hspace-io/Space_Alone)
-
-아래에서 챕터를 선택하면 해당 풀이가 새 창으로 열린다.
 
 **챕터 바로가기**
 
