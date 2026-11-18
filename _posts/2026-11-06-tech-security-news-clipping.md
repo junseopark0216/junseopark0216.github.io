@@ -17,6 +17,11 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/18
+
+- [Apache HTTP Server 취약점 악용 중 — CVE-2026-119618(CVSS 3.1 8.1): mod_http2 결함으로 인증 없이 원격 코드 실행, 11/11 2.4.71에서 수정, 싱가포르 CSA가 11/17 실제 악용·공개 PoC 존재 경고(피해 규모 미공개)](https://x.com/The_Cyber_News/status/2122929041464570334)
+- [Perforce Puppet Enterprise 취약점 악용 중 — CVE-2026-115731(CVSS 4.0 9.4): 취약한 Puppet Server에서 Puppet 서비스 계정 권한으로 코드 실행, 11/3 공개, CISA가 11/17 KEV 등재, 미 연방 민간기관 12/1까지 조치](https://x.com/The_Cyber_News/status/2123024450417549750)
+
 ### 11/17
 
 - [Google GTIG·Mandiant AI Threat Tracker — 공격자가 챗봇 활용을 넘어 AI 에이전트로 스캔·침투·내부 확산까지 사람 개입 거의 없이 자동화, 사이버범죄·스파이·영향력 공작 전반에서 AI 악용이 "임계 변곡점" 도달, 공격 시간 단축·규모 확대·다단계 침입을 기계 속도로 수행(11/16 발표)](https://x.com/The_Cyber_News/status/2122434785108771314)
