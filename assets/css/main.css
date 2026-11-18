@@ -261,7 +261,8 @@ a.chip-cat:hover { color: var(--brass-ink); filter: brightness(.96); }
 .chapter-index a b { font-family: var(--mono); font-size: 13px; color: var(--brass-ink);
   font-weight: 700; letter-spacing: .03em; border: 0; }
 .chapter-index a span { font-size: 13.5px; color: var(--ink-soft); line-height: 1.45;
-  overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  height: 2.9em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; text-overflow: ellipsis; }
 @media (max-width: 680px) { .chapter-index { grid-template-columns: 1fr; } }
 
 /* ---------- 연도 블록 ---------- */
