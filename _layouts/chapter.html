@@ -1,0 +1,46 @@
+---
+layout: default
+body_class: is-post
+---
+{%- assign chars = content | strip_html | size -%}
+{%- assign words = chars | divided_by: 500 | floor | plus: 1 -%}
+<article class="post">
+  <header class="post-head wrap-narrow">
+    <a class="post-crumb" href="{{ page.series_url | relative_url }}">
+      <span class="t-path">~/{{ page.series_cat | default: 'ctf' }}</span> <span>{{ page.series_title }}</span>
+    </a>
+    <h1 class="post-title">{{ page.title }}</h1>
+    {%- if page.subtitle %}<p class="post-sub">{{ page.subtitle }}</p>{% endif %}
+    <p class="post-meta">
+      <span>Ch. {{ page.chapter }} / {{ page.chapters_total }}</span>
+      <span>약 {{ words }}분 분량</span>
+    </p>
+  </header>
+
+  <div class="post-grid">
+    <div class="prose wrap-narrow" id="prose">
+      {{ content }}
+    </div>
+    {%- if page.toc %}
+    <aside class="toc" aria-label="목차">
+      <p class="toc-title">목차</p>
+      <ol id="toc-list"></ol>
+    </aside>
+    {%- endif %}
+  </div>
+
+  <nav class="post-nav wrap-narrow" aria-label="챕터 이동">
+    {%- assign pn = page.chapter | minus: 1 -%}
+    {%- if pn >= 1 %}
+    <a class="pn pn-prev" href="{{ page.chapter_base | append: pn | append: '/' | relative_url }}"><span>이전 챕터</span>Ch. {{ pn }}</a>
+    {%- else %}
+    <a class="pn pn-prev" href="{{ page.series_url | relative_url }}"><span>목록으로</span>{{ page.series_title }}</a>
+    {%- endif %}
+    {%- assign nn = page.chapter | plus: 1 -%}
+    {%- if nn <= page.chapters_total %}
+    <a class="pn pn-next" href="{{ page.chapter_base | append: nn | append: '/' | relative_url }}"><span>다음 챕터</span>Ch. {{ nn }}</a>
+    {%- else %}
+    <a class="pn pn-next" href="{{ page.series_url | relative_url }}"><span>시리즈 완료</span>목록으로</a>
+    {%- endif %}
+  </nav>
+</article>
