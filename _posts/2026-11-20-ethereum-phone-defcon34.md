@@ -311,7 +311,7 @@ dGEN1 같은 경우, 키를 다루는 libpuresoftkeymasterdevice.so는 소프트
 
 이렇게 획득한 값이 진짜 지갑 개인 키인지는 블록체인에서 확인할 수 있다. 발표자는 추출한 키로 공개 키를 만들어, Base 메인넷에 있는 스마트 계정 컨트랙트의 첫 번째 소유자와 일치하는 것을 확인했다. (블록체인에 기록된 정보는 누구나 조회할 수 있기 때문에, 지갑 컨트랙트에 등록된 소유자 정보와 직접 비교해 볼 수 있었던 것이다.)
 
-### 4-6. 에어드롭 “-1 클릭” 탈취
+### 4-6. 에어드롭 “-1-Click” 탈취
 
 앞의 내용들과 별개로, 폰을 해킹하지 않고도 에어드롭을 가로챌 수 있는 별도의 방법을 소개했다.
 
@@ -354,7 +354,6 @@ EIP에 대한 내용을 기술 블로그 형태로 정리할 예정이다.
 **발표 관련**
 
 - [발표자 블로그 - Break the Trust Chain of the Ethereum Phone](https://hhj4ck.github.io/en/break-the-trust-chain-of-the-ethereum-phone.html)
-- [DEF CON 34 발표 일정](https://defcon.org/html/defcon-34/dc-34-schedule.html)
 - [DEF CON 34 발표 영상](https://www.youtube.com/watch?v=SQxuyxqVyDI&t=294s)
 
 **dGEN1 / ethOS**
