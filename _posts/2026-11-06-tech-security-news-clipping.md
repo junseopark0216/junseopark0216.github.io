@@ -17,6 +17,11 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/20
+
+- [phpAfterShell — CVE-2026-126714(CVSS v4.0 9.2): PHP 기본 파일 기반 세션 핸들러 결함, 10월 PHP2Shell 패치를 우회하고 별도 PHP 버그와 엮어 인증 없이 원격 코드 실행, 11/19 연구진 공개·시연](https://x.com/The_Cyber_News/status/2123600465673785672)
+- [VMware vCenter 등 취약점 5건 패치(VMSA-2026-0009) — 최고 위험 CVE-2026-123890(CVSS 9.8): VMware Directory Service 인증 우회로 네트워크 접근만 있으면 로그인 없이 vCenter 장악, vCenter·SDDC Manager·VMware Tools 대상 CVSS 6.7~9.8, 우회책 없음, Broadcom 11/19 공개](https://x.com/The_Cyber_News/status/2123524464985964963)
+
 ### 11/19
 
 - [PHP 보안 업데이트 사전 예고 — 11/19 14:00~14:30 UTC(한국 시간 23:00~23:30) 지원 중인 모든 PHP 브랜치에 패치 배포, 최고 심각도 Critical, 다만 Critical 이슈는 기본값이 아닌 설정이나 흔치 않은 구성에서만 악용 가능, 미리 준비해 두고 나오는 즉시 설치 권고(정기 4주 릴리스 주기)](https://x.com/The_Cyber_News/status/2123233606986551773)
