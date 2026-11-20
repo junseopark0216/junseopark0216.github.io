@@ -271,7 +271,9 @@ BootROM -> Preloader -> bl2_ext -> (ATF, TEE, LK) -> 커널
 ![](/assets/img/posts/ethereum-phone-defcon34/image-2.png)
 
 MediaTek 부팅 체인. 발표자는 신뢰 상태(RoT)가 어긋나지 않도록 저장공간이 아닌 메모리에서만 패치를 진행했다. (4-3 에서 자세히 다룬다.)
+
 각 단계가 하는 일은 다음과 같다.
+
 | 단계 | 권한 레벨 | 하는 일 |
 | --- | --- | --- |
 | BootROM | - | 칩에 새겨진 첫 번째 코드. 다음 단계를 불러오고, 다운로드 모드를 제공한다. |
