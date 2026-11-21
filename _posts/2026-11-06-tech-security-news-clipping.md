@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/21
+
+- [WhatsApp Android 취약점 3건(11월 보안 업데이트) — WhatsApp이 저장한 파일 삭제·사용자 IP 주소 노출·Meta AI Private Processing 보안 검사 우회, 이 중 IP 노출 취약점은 특정 스팸 메시지와 함께 악용됐을 가능성(피해 규모 미공개), CVE-2026-102769는 Android용 SQL 인젝션](https://x.com/The_Cyber_News/status/2124004881132331498)
+
 ### 11/20
 
 - [phpAfterShell — CVE-2026-126714(CVSS v4.0 9.2): PHP 기본 파일 기반 세션 핸들러 결함, 10월 PHP2Shell 패치를 우회하고 별도 PHP 버그와 엮어 인증 없이 원격 코드 실행, 11/19 연구진 공개·시연](https://x.com/The_Cyber_News/status/2123600465673785672)
