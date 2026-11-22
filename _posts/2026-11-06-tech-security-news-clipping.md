@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/22
+
+- [Upload2Shell — CVE-2026-125396: Ghostscript Type 1 폰트 로더 결함, 10.08.0 이전 버전 영향, WordPress·Roundcube 웹메일·Linux 프린트 서버가 미리보기·썸네일·인쇄 처리 중 업로드 파일을 Ghostscript에 넘기면서 명령 실행 가능(Ghostscript를 직접 노출하지 않아도 해당)](https://x.com/The_Cyber_News/status/2124386142728384993)
+
 ### 11/21
 
 - [WhatsApp Android 취약점 3건(11월 보안 업데이트) — WhatsApp이 저장한 파일 삭제·사용자 IP 주소 노출·Meta AI Private Processing 보안 검사 우회, 이 중 IP 노출 취약점은 특정 스팸 메시지와 함께 악용됐을 가능성(피해 규모 미공개), CVE-2026-102769는 Android용 SQL 인젝션](https://x.com/The_Cyber_News/status/2124004881132331498)
