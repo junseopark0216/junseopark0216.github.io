@@ -17,6 +17,10 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/23
+
+- [VirusTotal 랜섬웨어 탐지 업데이트 — 실행 중 사용자 문서를 실제로 암호화하는지 확인하는 행위 기반 검사 도입, 75개 AV 엔진 탐지 0건이던 Python 랜섬웨어 샘플 탐지, VirusTotal·Google Threat Intelligence에 검증된 암호화 태그·강화된 랜섬웨어 행위 룰·실시간 헌팅 지원 추가](https://x.com/The_Cyber_News/status/2124555073246405114)
+
 ### 11/22
 
 - [Upload2Shell — CVE-2026-125396: Ghostscript Type 1 폰트 로더 결함, 10.08.0 이전 버전 영향, WordPress·Roundcube 웹메일·Linux 프린트 서버가 미리보기·썸네일·인쇄 처리 중 업로드 파일을 Ghostscript에 넘기면서 명령 실행 가능(Ghostscript를 직접 노출하지 않아도 해당)](https://x.com/The_Cyber_News/status/2124386142728384993)
