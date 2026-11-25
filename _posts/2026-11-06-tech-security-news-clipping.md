@@ -17,6 +17,14 @@ tags: ["보안뉴스", "클리핑", "daily"]
 
 ## 2026년 11월
 
+### 11/25
+
+- [Microsoft 365 대규모 장애 후 내부 코드 레드 선언 — 11/12~13 약 24시간 장애로 Outlook·Teams·Copilot·Exchange Online 중단, 사이버 공격·AI 에이전트 원인 아님, CEO 사티아 나델라 공개 사과, M365 Core 사장 제이슨 헨더슨 "이전 Exchange Online 장애 중 이렇게 오래 이메일 없이 지낸 적 없다", 장애 예방·빠른 복구를 최우선 과제로 지정](https://x.com/The_Cyber_News/status/2125456301031592373)
+
+### 11/24
+
+- [EU 집행위원회, 사이버 공격으로 사용자 개인정보 유출 확인 후 EU Academy 접근 차단 — 11/23 EU 기관 강좌·워크숍 온라인 학습 플랫폼의 일반 이용자 접근 차단, 광범위한 사이버 공격 관련 사건 중 개인정보 유출을 공개 확인한 첫 서비스, 피해 사용자 수·서비스 재개 시점·비밀번호 유출 여부 미공개](https://x.com/The_Cyber_News/status/2124876659111444727)
+
 ### 11/23
 
 - [VirusTotal 랜섬웨어 탐지 업데이트 — 실행 중 사용자 문서를 실제로 암호화하는지 확인하는 행위 기반 검사 도입, 75개 AV 엔진 탐지 0건이던 Python 랜섬웨어 샘플 탐지, VirusTotal·Google Threat Intelligence에 검증된 암호화 태그·강화된 랜섬웨어 행위 룰·실시간 헌팅 지원 추가](https://x.com/The_Cyber_News/status/2124555073246405114)
